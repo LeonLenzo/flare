@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#8b5cf6">
+    <title>Flare - Symptom Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Flare</h1>
+            <p class="subtitle">Track symptoms & cycles</p>
+        </header>
+
+        <nav class="tab-nav">
+            <button class="tab-btn active" data-tab="log">Log</button>
+            <button class="tab-btn" data-tab="calendar">Calendar</button>
+            <button class="tab-btn" data-tab="insights">Insights</button>
+        </nav>
+
+        <!-- LOG TAB -->
+        <div class="tab-content active" id="log-tab">
+            <div class="date-selector">
+                <input type="date" id="log-date" />
+            </div>
+
+            <section class="card">
+                <h2>Cycle</h2>
+                <div class="cycle-buttons">
+                    <button class="cycle-btn" data-type="period-start">Period Start</button>
+                    <button class="cycle-btn" data-type="period-end">Period End</button>
+                </div>
+                <div id="cycle-status" class="status-text"></div>
+            </section>
+
+            <section class="card">
+                <h2>Endometriosis Symptoms</h2>
+                <div class="symptom-group">
+                    <label>
+                        <input type="checkbox" class="symptom-check" data-category="endo" value="pelvic-pain">
+                        <span>Pelvic Pain</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" class="symptom-check" data-category="endo" value="cramps">
+                        <span>Cramps</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" class="symptom-check" data-category="endo" value="back-pain">
+                        <span>Back Pain</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" class="symptom-check" data-category="endo" value="fatigue">
+                        <span>Fatigue</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" class="symptom-check" data-category="endo" value="nausea">
+                        <span>Nausea</span>
+                    </label>
+                </div>
+                <div class="severity-slider">
+                    <label for="endo-severity">Severity</label>
+                    <input type="range" id="endo-severity" min="0" max="10" value="0" disabled>
+                    <span id="endo-severity-value">0</span>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>IBS Symptoms</h2>
+                <div class="symptom-group">
+                    <label>
+                        <input type="checkbox" class="symptom-check" data-category="ibs" value="abdominal-pain">
+                        <span>Abdominal Pain</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" class="symptom-check" data-category="ibs" value="bloating">
+                        <span>Bloating</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" class="symptom-check" data-category="ibs" value="diarrhea">
+                        <span>Diarrhea</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" class="symptom-check" data-category="ibs" value="constipation">
+                        <span>Constipation</span>
+                    </label>
+                    <label>
+                        <input type="checkbox" class="symptom-check" data-category="ibs" value="gas">
+                        <span>Gas</span>
+                    </label>
+                </div>
+                <div class="severity-slider">
+                    <label for="ibs-severity">Severity</label>
+                    <input type="range" id="ibs-severity" min="0" max="10" value="0" disabled>
+                    <span id="ibs-severity-value">0</span>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Notes</h2>
+                <textarea id="daily-notes" placeholder="Optional notes about today..."></textarea>
+            </section>
+
+            <button class="save-btn" id="save-log">Save Entry</button>
+        </div>
+
+        <!-- CALENDAR TAB -->
+        <div class="tab-content" id="calendar-tab">
+            <div class="calendar-header">
+                <button id="prev-month">‹</button>
+                <h2 id="calendar-month"></h2>
+                <button id="next-month">›</button>
+            </div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+            <div class="calendar-legend">
+                <div class="legend-item">
+                    <span class="legend-color period"></span>
+                    <span>Period</span>
+                </div>
+                <div class="legend-item">
+                    <span class="legend-color symptoms"></span>
+                    <span>Symptoms Logged</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- INSIGHTS TAB -->
+        <div class="tab-content" id="insights-tab">
+            <section class="card">
+                <h2>Cycle Summary</h2>
+                <div id="cycle-summary"></div>
+            </section>
+
+            <section class="card">
+                <h2>Symptom Trends (Last 30 Days)</h2>
+                <canvas id="symptom-chart"></canvas>
+            </section>
+
+            <section class="card">
+                <h2>Symptoms by Cycle Phase</h2>
+                <canvas id="phase-chart"></canvas>
+            </section>
+
+            <div class="export-section">
+                <button id="export-data" class="secondary-btn">Export Data (JSON)</button>
+                <button id="clear-data" class="danger-btn">Clear All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
