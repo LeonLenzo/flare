@@ -4,24 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#8b5cf6">
-    <title>Flare - Symptom Tracker</title>
+    <title>flare.up - Symptom Tracker</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Flare</h1>
+            <h1>flare.up</h1>
             <p class="subtitle">Track symptoms & cycles</p>
         </header>
 
         <nav class="tab-nav">
-            <button class="tab-btn active" data-tab="log">Log</button>
-            <button class="tab-btn" data-tab="calendar">Calendar</button>
+            <button class="tab-btn" data-tab="log">Log</button>
+            <button class="tab-btn active" data-tab="calendar">Calendar</button>
             <button class="tab-btn" data-tab="insights">Insights</button>
         </nav>
 
         <!-- LOG TAB -->
-        <div class="tab-content active" id="log-tab">
+        <div class="tab-content" id="log-tab">
             <div class="date-selector">
                 <button class="nav-btn" id="prev-day">‹</button>
                 <input type="date" id="log-date" />
@@ -106,27 +106,55 @@
             <section class="card">
                 <h2>Notes</h2>
                 <textarea id="daily-notes" placeholder="Optional notes about today..."></textarea>
+                <div class="auto-save-indicator">Changes saved automatically</div>
             </section>
-
-            <button class="save-btn" id="save-log">Save Entry</button>
         </div>
 
         <!-- CALENDAR TAB -->
-        <div class="tab-content" id="calendar-tab">
+        <div class="tab-content active" id="calendar-tab">
             <div class="calendar-header">
-                <button id="prev-month">‹</button>
-                <h2 id="calendar-month"></h2>
-                <button id="next-month">›</button>
+                <button class="nav-btn" id="prev-month">‹</button>
+                <div class="calendar-selectors">
+                    <select id="month-select"></select>
+                    <select id="year-select"></select>
+                </div>
+                <button class="nav-btn" id="next-month">›</button>
             </div>
             <div class="calendar-grid" id="calendar-grid"></div>
-            <div class="calendar-legend">
-                <div class="legend-item">
-                    <span class="legend-color period"></span>
-                    <span>Period</span>
+            <div class="calendar-legend-container">
+                <div class="legend-section">
+                    <h4>Cycle Phase</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-color menstrual"></span>
+                            <span>Menstrual</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color follicular"></span>
+                            <span>Follicular</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color ovulation"></span>
+                            <span>Ovulation</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color luteal"></span>
+                            <span>Luteal</span>
+                        </div>
+                    </div>
                 </div>
-                <div class="legend-item">
-                    <span class="legend-color symptoms"></span>
-                    <span>Symptoms Logged</span>
+                <div class="legend-section">
+                    <h4>Symptoms</h4>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-bar endo"></span>
+                            <span>Endo</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-bar ibs"></span>
+                            <span>IBS</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

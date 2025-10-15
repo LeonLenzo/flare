@@ -75,16 +75,19 @@ function initializeLogTab() {
         });
     });
 
-    // Symptom sliders
+    // Symptom sliders - auto save on change
     document.querySelectorAll('.symptom-slider').forEach(slider => {
         const valueDisplay = slider.nextElementSibling;
         slider.addEventListener('input', () => {
             valueDisplay.textContent = slider.value;
+            saveDayData();
         });
     });
 
-    // Save button
-    document.getElementById('save-log').addEventListener('click', saveDayData);
+    // Notes - auto save on change
+    document.getElementById('daily-notes').addEventListener('input', () => {
+        saveDayData();
+    });
 
     loadDayData();
     updateCycleStatus();
@@ -145,6 +148,11 @@ function saveDayData() {
     }
 
     Storage.set('symptoms', symptomsData);
+
+    // Re-render calendar if on calendar tab
+    if (document.getElementById('calendar-tab').classList.contains('active')) {
+        renderCalendar();
+    }
 }
 
 // ===== CYCLE TRACKING =====
@@ -185,6 +193,11 @@ function toggleCycleDay(date, type) {
 
     Storage.set('cycle', cycleData);
     updateCycleStatus();
+
+    // Re-render calendar if on calendar tab to show phase colors
+    if (document.getElementById('calendar-tab').classList.contains('active')) {
+        renderCalendar();
+    }
 }
 
 function updateCycleStatus() {
@@ -268,13 +281,80 @@ function getCyclePhase(date) {
 
 // ===== CALENDAR =====
 function initializeCalendar() {
+    console.log('Initializing calendar...');
+
+    // Populate month dropdown
+    const monthSelect = document.getElementById('month-select');
+    console.log('Month select element:', monthSelect);
+
+    if (!monthSelect) {
+        console.error('Month select not found!');
+        return;
+    }
+
+    const months = ['January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'];
+
+    // Clear existing options first
+    monthSelect.innerHTML = '';
+
+    months.forEach((month, index) => {
+        const option = document.createElement('option');
+        option.value = index;
+        option.textContent = month;
+        monthSelect.appendChild(option);
+    });
+
+    console.log('Month options added:', monthSelect.options.length);
+
+    // Populate year dropdown (current year ± 5 years)
+    const yearSelect = document.getElementById('year-select');
+
+    if (!yearSelect) {
+        console.error('Year select not found!');
+        return;
+    }
+
+    // Clear existing options first
+    yearSelect.innerHTML = '';
+
+    const currentYear = new Date().getFullYear();
+    for (let year = currentYear - 5; year <= currentYear + 5; year++) {
+        const option = document.createElement('option');
+        option.value = year;
+        option.textContent = year;
+        yearSelect.appendChild(option);
+    }
+
+    console.log('Year options added:', yearSelect.options.length);
+
+    // Set current month and year
+    monthSelect.value = currentCalendarDate.getMonth();
+    yearSelect.value = currentCalendarDate.getFullYear();
+
+    // Month/Year dropdown change handlers
+    monthSelect.addEventListener('change', () => {
+        currentCalendarDate.setMonth(parseInt(monthSelect.value));
+        renderCalendar();
+    });
+
+    yearSelect.addEventListener('change', () => {
+        currentCalendarDate.setFullYear(parseInt(yearSelect.value));
+        renderCalendar();
+    });
+
+    // Previous/Next month buttons
     document.getElementById('prev-month').addEventListener('click', () => {
         currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+        monthSelect.value = currentCalendarDate.getMonth();
+        yearSelect.value = currentCalendarDate.getFullYear();
         renderCalendar();
     });
 
     document.getElementById('next-month').addEventListener('click', () => {
         currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+        monthSelect.value = currentCalendarDate.getMonth();
+        yearSelect.value = currentCalendarDate.getFullYear();
         renderCalendar();
     });
 
@@ -285,8 +365,11 @@ function renderCalendar() {
     const year = currentCalendarDate.getFullYear();
     const month = currentCalendarDate.getMonth();
 
-    document.getElementById('calendar-month').textContent =
-        currentCalendarDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    // Update dropdowns to match current date
+    const monthSelect = document.getElementById('month-select');
+    const yearSelect = document.getElementById('year-select');
+    if (monthSelect) monthSelect.value = month;
+    if (yearSelect) yearSelect.value = year;
 
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -317,14 +400,50 @@ function renderCalendar() {
         const date = `${year}-${String(month + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
         const day = document.createElement('div');
         day.className = 'calendar-day';
-        day.textContent = i;
 
         if (date === today) day.classList.add('today');
 
-        const periodInfo = getPeriodInfo(date);
-        if (periodInfo.isInPeriod) day.classList.add('period');
+        // Get cycle phase
+        const phase = getCyclePhase(date);
+        const phaseClass = phase.toLowerCase().replace(/ /g, '-');
+        if (phase !== 'Unknown') {
+            day.classList.add(`phase-${phaseClass}`);
+        }
 
-        if (symptomsData[date]) day.classList.add('has-symptoms');
+        // Create day number
+        const dayNumber = document.createElement('div');
+        dayNumber.className = 'calendar-day-number';
+        dayNumber.textContent = i;
+        day.appendChild(dayNumber);
+
+        // Calculate and display symptom scores as bars
+        const data = symptomsData[date];
+        const scoresDiv = document.createElement('div');
+        scoresDiv.className = 'calendar-day-scores';
+
+        // Calculate average endo score and create bar
+        if (data?.endo) {
+            const endoValues = Object.values(data.endo);
+            const endoAvg = endoValues.reduce((a, b) => a + b, 0) / endoValues.length;
+            const endoBar = document.createElement('div');
+            endoBar.className = 'score-bar endo';
+            endoBar.style.height = `${(endoAvg / 5) * 100}%`;
+            endoBar.title = `Endo: ${endoAvg.toFixed(1)}`;
+            scoresDiv.appendChild(endoBar);
+        }
+
+        // Calculate average IBS score and create bar
+        if (data?.ibs) {
+            const ibsValues = Object.values(data.ibs);
+            const ibsAvg = ibsValues.reduce((a, b) => a + b, 0) / ibsValues.length;
+            const ibsBar = document.createElement('div');
+            ibsBar.className = 'score-bar ibs';
+            ibsBar.style.height = `${(ibsAvg / 5) * 100}%`;
+            ibsBar.title = `IBS: ${ibsAvg.toFixed(1)}`;
+            scoresDiv.appendChild(ibsBar);
+        }
+
+        day.appendChild(scoresDiv);
 
         day.addEventListener('click', () => {
             currentDate = date;
@@ -448,16 +567,16 @@ function renderSymptomTrends() {
                 {
                     label: 'Endo Severity',
                     data: endoData,
-                    borderColor: '#8b5cf6',
-                    backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                    borderColor: '#5eead4',
+                    backgroundColor: 'rgba(94, 234, 212, 0.2)',
                     tension: 0.3,
                     fill: true
                 },
                 {
                     label: 'IBS Severity',
                     data: ibsData,
-                    borderColor: '#ec4899',
-                    backgroundColor: 'rgba(236, 72, 153, 0.1)',
+                    borderColor: '#93c5fd',
+                    backgroundColor: 'rgba(147, 197, 253, 0.2)',
                     tension: 0.3,
                     fill: true
                 }
@@ -534,12 +653,12 @@ function renderPhaseChart() {
                 {
                     label: 'Avg Endo Severity',
                     data: avgEndo,
-                    backgroundColor: 'rgba(139, 92, 246, 0.7)'
+                    backgroundColor: 'rgba(94, 234, 212, 0.8)'
                 },
                 {
                     label: 'Avg IBS Severity',
                     data: avgIbs,
-                    backgroundColor: 'rgba(236, 72, 153, 0.7)'
+                    backgroundColor: 'rgba(147, 197, 253, 0.8)'
                 }
             ]
         },

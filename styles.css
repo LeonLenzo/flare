@@ -343,13 +343,20 @@ textarea {
 .calendar-day {
     aspect-ratio: 1;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
     border-radius: 8px;
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
     position: relative;
+    padding: 4px;
+    transition: transform 0.2s;
+}
+
+.calendar-day:hover:not(.header):not(.other-month) {
+    transform: scale(1.05);
 }
 
 .calendar-day.header {
@@ -357,40 +364,111 @@ textarea {
     font-size: 12px;
     font-weight: 700;
     cursor: default;
+    justify-content: center;
+    align-items: center;
 }
 
 .calendar-day.other-month {
     color: var(--border);
+    opacity: 0.3;
 }
 
 .calendar-day.today {
-    border: 2px solid var(--primary);
+    border: 3px solid var(--primary);
 }
 
-.calendar-day.period {
-    background: var(--period);
+.calendar-day-number {
+    font-size: 11px;
+    font-weight: 700;
+    text-align: right;
+    margin-bottom: auto;
 }
 
-.calendar-day.has-symptoms {
-    background: var(--symptoms);
-}
-
-.calendar-day.period.has-symptoms {
-    background: linear-gradient(135deg, var(--period) 50%, var(--symptoms) 50%);
-}
-
-.calendar-legend {
+.calendar-day-scores {
     display: flex;
-    gap: 16px;
+    gap: 6px;
     justify-content: center;
+    align-items: flex-end;
+    margin-top: auto;
+    height: 45px;
+    padding-bottom: 4px;
+}
+
+.score-bar {
+    width: 14px;
+    border-radius: 3px 3px 0 0;
+    transition: all 0.2s;
+    border: 2px solid rgba(0, 0, 0, 0.15);
+    border-bottom: none;
+}
+
+.score-bar.endo {
+    background: linear-gradient(to top, #5eead4, #99f6e4);
+    box-shadow: 0 2px 4px rgba(94, 234, 212, 0.4);
+}
+
+.score-bar.ibs {
+    background: linear-gradient(to top, #93c5fd, #bfdbfe);
+    box-shadow: 0 2px 4px rgba(147, 197, 253, 0.4);
+}
+
+/* Cycle phase colors - warm pastels as gradients */
+.calendar-day.phase-menstrual {
+    background: linear-gradient(to bottom, #fca5a5, #fff);
+    color: #374151;
+}
+
+.calendar-day.phase-follicular {
+    background: linear-gradient(to bottom, #fde68a, #fff);
+    color: #374151;
+}
+
+.calendar-day.phase-ovulation {
+    background: linear-gradient(to bottom, #fbcfe8, #fff);
+    color: #374151;
+}
+
+.calendar-day.phase-luteal {
+    background: linear-gradient(to bottom, #ddd6fe, #fff);
+    color: #374151;
+}
+
+.calendar-day.phase-late-luteal {
+    background: linear-gradient(to bottom, #c7d2fe, #fff);
+    color: #374151;
+}
+
+.calendar-legend-container {
+    display: flex;
+    justify-content: space-around;
+    gap: 32px;
     margin-top: 16px;
-    font-size: 14px;
+    padding: 16px;
+    background: var(--card-bg);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+}
+
+.legend-section h4 {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 12px;
+    text-align: center;
+}
+
+.legend-items {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    font-size: 13px;
 }
 
 .legend-color {
@@ -399,12 +477,40 @@ textarea {
     border-radius: 4px;
 }
 
-.legend-color.period {
-    background: var(--period);
+.legend-color.menstrual {
+    background: linear-gradient(to bottom, #fca5a5, #fff);
+    border: 1px solid #fca5a5;
 }
 
-.legend-color.symptoms {
-    background: var(--symptoms);
+.legend-color.follicular {
+    background: linear-gradient(to bottom, #fde68a, #fff);
+    border: 1px solid #fde68a;
+}
+
+.legend-color.ovulation {
+    background: linear-gradient(to bottom, #fbcfe8, #fff);
+    border: 1px solid #fbcfe8;
+}
+
+.legend-color.luteal {
+    background: linear-gradient(to bottom, #ddd6fe, #fff);
+    border: 1px solid #ddd6fe;
+}
+
+.legend-bar {
+    width: 12px;
+    height: 20px;
+    border-radius: 3px 3px 0 0;
+    border: 2px solid rgba(0, 0, 0, 0.15);
+    border-bottom: none;
+}
+
+.legend-bar.endo {
+    background: linear-gradient(to top, #5eead4, #99f6e4);
+}
+
+.legend-bar.ibs {
+    background: linear-gradient(to top, #93c5fd, #bfdbfe);
 }
 
 /* Insights */
@@ -477,4 +583,38 @@ canvas {
     .card {
         padding: 16px;
     }
+}
+.auto-save-indicator {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--text-light);
+    text-align: center;
+}
+
+.calendar-selectors {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.calendar-selectors select {
+    padding: 8px 12px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    background: var(--card-bg);
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.calendar-selectors select:hover {
+    border-color: var(--primary);
+}
+
+.calendar-selectors select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
