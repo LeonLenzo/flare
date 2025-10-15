@@ -576,9 +576,38 @@ canvas {
 }
 
 /* Responsive */
+@media (max-width: 600px) {
+    .calendar-grid {
+        gap: 4px;
+        padding: 8px;
+    }
+
+    .calendar-day {
+        padding: 4px;
+        font-size: 12px;
+    }
+
+    .calendar-day-number {
+        font-size: 10px;
+    }
+
+    .calendar-day-scores {
+        height: 35px;
+    }
+
+    .score-bar {
+        width: 10px;
+    }
+
+    .calendar-day.header {
+        font-size: 10px;
+        padding: 4px 2px;
+    }
+}
+
 @media (max-width: 400px) {
     .container {
-        padding: 12px;
+        padding: 8px;
     }
 
     header h1 {
@@ -586,7 +615,30 @@ canvas {
     }
 
     .card {
-        padding: 16px;
+        padding: 12px;
+    }
+
+    .calendar-grid {
+        gap: 3px;
+        padding: 6px;
+    }
+
+    .calendar-day {
+        padding: 3px;
+        border-radius: 6px;
+    }
+
+    .calendar-day-number {
+        font-size: 9px;
+    }
+
+    .calendar-day-scores {
+        height: 30px;
+        gap: 4px;
+    }
+
+    .score-bar {
+        width: 8px;
     }
 }
 .auto-save-indicator {
