@@ -333,9 +333,9 @@ textarea {
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
+    gap: 6px;
     background: var(--card-bg);
-    padding: 16px;
+    padding: 12px;
     border-radius: 12px;
     box-shadow: var(--shadow);
 }
@@ -351,8 +351,10 @@ textarea {
     font-weight: 600;
     cursor: pointer;
     position: relative;
-    padding: 4px;
+    padding: 6px;
     transition: transform 0.2s;
+    min-width: 0;
+    min-height: 0;
 }
 
 .calendar-day:hover:not(.header):not(.other-month) {
@@ -361,13 +363,14 @@ textarea {
 
 .calendar-day.header {
     color: var(--text-light);
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 700;
     cursor: default;
     justify-content: center;
     align-items: center;
     aspect-ratio: auto;
-    padding: 8px 4px;
+    padding: 6px 4px;
+    background: transparent;
 }
 
 .calendar-day.other-month {
