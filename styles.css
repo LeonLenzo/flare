@@ -217,6 +217,7 @@ header h1 {
     background: var(--border);
     outline: none;
     cursor: pointer;
+    touch-action: none;
 }
 
 .symptom-slider::-webkit-slider-thumb {
@@ -463,43 +464,39 @@ textarea {
 }
 
 .legend-items {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
 }
 
 .legend-item {
     display: flex;
     align-items: center;
     gap: 6px;
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .legend-color {
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border-radius: 4px;
+    flex-shrink: 0;
 }
 
 .legend-color.menstrual {
-    background: linear-gradient(to bottom, #fca5a5, #fff);
-    border: 1px solid #fca5a5;
+    background: #fca5a5;
 }
 
 .legend-color.follicular {
-    background: linear-gradient(to bottom, #fde68a, #fff);
-    border: 1px solid #fde68a;
+    background: #fde68a;
 }
 
 .legend-color.ovulation {
-    background: linear-gradient(to bottom, #fbcfe8, #fff);
-    border: 1px solid #fbcfe8;
+    background: #fbcfe8;
 }
 
 .legend-color.luteal {
-    background: linear-gradient(to bottom, #ddd6fe, #fff);
-    border: 1px solid #ddd6fe;
+    background: #ddd6fe;
 }
 
 .legend-bar {
