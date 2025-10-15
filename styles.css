@@ -333,7 +333,7 @@ textarea {
 .calendar-grid {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    gap: 4px;
+    gap: 8px;
     background: var(--card-bg);
     padding: 16px;
     border-radius: 12px;
@@ -366,6 +366,8 @@ textarea {
     cursor: default;
     justify-content: center;
     align-items: center;
+    aspect-ratio: auto;
+    padding: 8px 4px;
 }
 
 .calendar-day.other-month {
