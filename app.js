@@ -49,6 +49,23 @@ function initializeLogTab() {
         loadDayData();
     });
 
+    // Day navigation
+    document.getElementById('prev-day').addEventListener('click', () => {
+        const date = new Date(currentDate);
+        date.setDate(date.getDate() - 1);
+        currentDate = date.toISOString().split('T')[0];
+        dateInput.value = currentDate;
+        loadDayData();
+    });
+
+    document.getElementById('next-day').addEventListener('click', () => {
+        const date = new Date(currentDate);
+        date.setDate(date.getDate() + 1);
+        currentDate = date.toISOString().split('T')[0];
+        dateInput.value = currentDate;
+        loadDayData();
+    });
+
     // Cycle tracking
     document.querySelectorAll('.cycle-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -58,24 +75,9 @@ function initializeLogTab() {
         });
     });
 
-    // Symptom checkboxes
-    document.querySelectorAll('.symptom-check').forEach(checkbox => {
-        checkbox.addEventListener('change', () => {
-            const category = checkbox.dataset.category;
-            const slider = document.getElementById(`${category}-severity`);
-            const anyChecked = document.querySelectorAll(`.symptom-check[data-category="${category}"]:checked`).length > 0;
-            slider.disabled = !anyChecked;
-            if (!anyChecked) {
-                slider.value = 0;
-                document.getElementById(`${category}-severity-value`).textContent = '0';
-            }
-        });
-    });
-
-    // Severity sliders
-    ['endo', 'ibs'].forEach(category => {
-        const slider = document.getElementById(`${category}-severity`);
-        const valueDisplay = document.getElementById(`${category}-severity-value`);
+    // Symptom sliders
+    document.querySelectorAll('.symptom-slider').forEach(slider => {
+        const valueDisplay = slider.nextElementSibling;
         slider.addEventListener('input', () => {
             valueDisplay.textContent = slider.value;
         });
@@ -91,23 +93,13 @@ function initializeLogTab() {
 function loadDayData() {
     const data = symptomsData[currentDate] || {};
 
-    // Load symptoms
-    document.querySelectorAll('.symptom-check').forEach(checkbox => {
-        const category = checkbox.dataset.category;
-        const symptoms = data[`${category}Symptoms`] || [];
-        checkbox.checked = symptoms.includes(checkbox.value);
-    });
-
-    // Load severity
-    ['endo', 'ibs'].forEach(category => {
-        const slider = document.getElementById(`${category}-severity`);
-        const valueDisplay = document.getElementById(`${category}-severity-value`);
-        const severity = data[`${category}Severity`] || 0;
-        slider.value = severity;
-        valueDisplay.textContent = severity;
-
-        const anyChecked = document.querySelectorAll(`.symptom-check[data-category="${category}"]:checked`).length > 0;
-        slider.disabled = !anyChecked;
+    // Load symptom sliders
+    document.querySelectorAll('.symptom-slider').forEach(slider => {
+        const category = slider.dataset.category;
+        const symptom = slider.dataset.symptom;
+        const value = data[category]?.[symptom] || 0;
+        slider.value = value;
+        slider.nextElementSibling.textContent = value;
     });
 
     // Load notes
@@ -118,23 +110,24 @@ function loadDayData() {
 }
 
 function saveDayData() {
-    const data = {};
+    const data = {
+        endo: {},
+        ibs: {},
+    };
 
-    // Save endo symptoms
-    const endoSymptoms = Array.from(document.querySelectorAll('.symptom-check[data-category="endo"]:checked'))
-        .map(cb => cb.value);
-    if (endoSymptoms.length > 0) {
-        data.endoSymptoms = endoSymptoms;
-        data.endoSeverity = parseInt(document.getElementById('endo-severity').value);
-    }
+    // Save symptom values from sliders
+    document.querySelectorAll('.symptom-slider').forEach(slider => {
+        const category = slider.dataset.category;
+        const symptom = slider.dataset.symptom;
+        const value = parseInt(slider.value);
+        if (value > 0) {
+            data[category][symptom] = value;
+        }
+    });
 
-    // Save IBS symptoms
-    const ibsSymptoms = Array.from(document.querySelectorAll('.symptom-check[data-category="ibs"]:checked'))
-        .map(cb => cb.value);
-    if (ibsSymptoms.length > 0) {
-        data.ibsSymptoms = ibsSymptoms;
-        data.ibsSeverity = parseInt(document.getElementById('ibs-severity').value);
-    }
+    // Remove empty categories
+    if (Object.keys(data.endo).length === 0) delete data.endo;
+    if (Object.keys(data.ibs).length === 0) delete data.ibs;
 
     // Save notes
     const notes = document.getElementById('daily-notes').value.trim();
@@ -211,18 +204,24 @@ function updateCycleStatus() {
         document.querySelector('[data-type="period-end"]').classList.add('marked');
     }
 
+    const cycleDay = getCycleDay(currentDate);
+    const cyclePhase = getCyclePhase(currentDate);
+
     if (currentPeriod) {
-        statusDiv.textContent = '🩸 Period active';
+        statusDiv.innerHTML = `<strong>🩸 Menstrual Phase</strong>${cycleDay ? ` - Day ${cycleDay}` : ''}`;
         statusDiv.style.color = '#ec4899';
+    } else if (cycleDay) {
+        const phaseEmoji = {
+            'Follicular': '🌱',
+            'Ovulation': '🌸',
+            'Luteal': '🌙',
+            'Late Luteal': '🌑'
+        };
+        statusDiv.innerHTML = `<strong>${phaseEmoji[cyclePhase] || ''} ${cyclePhase} Phase</strong> - Day ${cycleDay}`;
+        statusDiv.style.color = '#8b5cf6';
     } else {
-        const cycleDay = getCycleDay(currentDate);
-        if (cycleDay) {
-            statusDiv.textContent = `Day ${cycleDay} of cycle`;
-            statusDiv.style.color = '#6b7280';
-        } else {
-            statusDiv.textContent = 'No cycle data yet';
-            statusDiv.style.color = '#9ca3af';
-        }
+        statusDiv.textContent = 'No cycle data yet - mark your period start';
+        statusDiv.style.color = '#9ca3af';
     }
 }
 
@@ -420,12 +419,18 @@ function renderSymptomTrends() {
 
     const endoData = dates.map(date => {
         const data = symptomsData[date];
-        return data?.endoSeverity || 0;
+        if (!data?.endo) return 0;
+        // Calculate average of all endo symptoms
+        const values = Object.values(data.endo);
+        return values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
     });
 
     const ibsData = dates.map(date => {
         const data = symptomsData[date];
-        return data?.ibsSeverity || 0;
+        if (!data?.ibs) return 0;
+        // Calculate average of all IBS symptoms
+        const values = Object.values(data.ibs);
+        return values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
     });
 
     const labels = dates.map(date => {
@@ -469,9 +474,9 @@ function renderSymptomTrends() {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 10,
+                    max: 5,
                     ticks: {
-                        stepSize: 2
+                        stepSize: 1
                     }
                 }
             }
@@ -496,8 +501,16 @@ function renderPhaseChart() {
         const data = symptomsData[date];
 
         if (phaseData[phase]) {
-            if (data.endoSeverity) phaseData[phase].endo.push(data.endoSeverity);
-            if (data.ibsSeverity) phaseData[phase].ibs.push(data.ibsSeverity);
+            if (data.endo) {
+                const endoValues = Object.values(data.endo);
+                const endoAvg = endoValues.reduce((a, b) => a + b, 0) / endoValues.length;
+                phaseData[phase].endo.push(endoAvg);
+            }
+            if (data.ibs) {
+                const ibsValues = Object.values(data.ibs);
+                const ibsAvg = ibsValues.reduce((a, b) => a + b, 0) / ibsValues.length;
+                phaseData[phase].ibs.push(ibsAvg);
+            }
         }
     });
 
@@ -541,9 +554,9 @@ function renderPhaseChart() {
             scales: {
                 y: {
                     beginAtZero: true,
-                    max: 10,
+                    max: 5,
                     ticks: {
-                        stepSize: 2
+                        stepSize: 1
                     }
                 }
             }

@@ -23,77 +23,83 @@
         <!-- LOG TAB -->
         <div class="tab-content active" id="log-tab">
             <div class="date-selector">
+                <button class="nav-btn" id="prev-day">‹</button>
                 <input type="date" id="log-date" />
+                <button class="nav-btn" id="next-day">›</button>
             </div>
 
             <section class="card">
                 <h2>Cycle</h2>
                 <div class="cycle-buttons">
-                    <button class="cycle-btn" data-type="period-start">Period Start</button>
-                    <button class="cycle-btn" data-type="period-end">Period End</button>
+                    <button class="cycle-btn" data-type="period-start">Start</button>
+                    <button class="cycle-btn" data-type="period-end">Stop</button>
                 </div>
                 <div id="cycle-status" class="status-text"></div>
             </section>
 
             <section class="card">
-                <h2>Endometriosis Symptoms</h2>
-                <div class="symptom-group">
-                    <label>
-                        <input type="checkbox" class="symptom-check" data-category="endo" value="pelvic-pain">
-                        <span>Pelvic Pain</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" class="symptom-check" data-category="endo" value="cramps">
-                        <span>Cramps</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" class="symptom-check" data-category="endo" value="back-pain">
-                        <span>Back Pain</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" class="symptom-check" data-category="endo" value="fatigue">
-                        <span>Fatigue</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" class="symptom-check" data-category="endo" value="nausea">
-                        <span>Nausea</span>
-                    </label>
-                </div>
-                <div class="severity-slider">
-                    <label for="endo-severity">Severity</label>
-                    <input type="range" id="endo-severity" min="0" max="10" value="0" disabled>
-                    <span id="endo-severity-value">0</span>
-                </div>
-            </section>
-
-            <section class="card">
-                <h2>IBS Symptoms</h2>
-                <div class="symptom-group">
-                    <label>
-                        <input type="checkbox" class="symptom-check" data-category="ibs" value="abdominal-pain">
-                        <span>Abdominal Pain</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" class="symptom-check" data-category="ibs" value="bloating">
-                        <span>Bloating</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" class="symptom-check" data-category="ibs" value="diarrhea">
-                        <span>Diarrhea</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" class="symptom-check" data-category="ibs" value="constipation">
-                        <span>Constipation</span>
-                    </label>
-                    <label>
-                        <input type="checkbox" class="symptom-check" data-category="ibs" value="gas">
-                        <span>Gas</span>
-                    </label>
-                </div>
-                <div class="severity-slider">
-                    <label for="ibs-severity">Severity</label>
-                    <input type="range" id="ibs-severity" min="0" max="10" value="0" disabled>
-                    <span id="ibs-severity-value">0</span>
+                <h2>Symptoms</h2>
+                <div class="symptoms-grid">
+                    <div class="symptoms-column">
+                        <h3>Endometriosis</h3>
+                        <div class="slider-group">
+                            <label>
+                                <span>Pelvic Pain</span>
+                                <input type="range" class="symptom-slider" data-category="endo" data-symptom="pelvic-pain" min="0" max="5" value="0">
+                                <span class="slider-value">0</span>
+                            </label>
+                            <label>
+                                <span>Cramps</span>
+                                <input type="range" class="symptom-slider" data-category="endo" data-symptom="cramps" min="0" max="5" value="0">
+                                <span class="slider-value">0</span>
+                            </label>
+                            <label>
+                                <span>Back Pain</span>
+                                <input type="range" class="symptom-slider" data-category="endo" data-symptom="back-pain" min="0" max="5" value="0">
+                                <span class="slider-value">0</span>
+                            </label>
+                            <label>
+                                <span>Fatigue</span>
+                                <input type="range" class="symptom-slider" data-category="endo" data-symptom="fatigue" min="0" max="5" value="0">
+                                <span class="slider-value">0</span>
+                            </label>
+                            <label>
+                                <span>Nausea</span>
+                                <input type="range" class="symptom-slider" data-category="endo" data-symptom="nausea" min="0" max="5" value="0">
+                                <span class="slider-value">0</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="symptoms-column">
+                        <h3>IBS</h3>
+                        <div class="slider-group">
+                            <label>
+                                <span>Abdominal Pain</span>
+                                <input type="range" class="symptom-slider" data-category="ibs" data-symptom="abdominal-pain" min="0" max="5" value="0">
+                                <span class="slider-value">0</span>
+                            </label>
+                            <label>
+                                <span>Bloating</span>
+                                <input type="range" class="symptom-slider" data-category="ibs" data-symptom="bloating" min="0" max="5" value="0">
+                                <span class="slider-value">0</span>
+                            </label>
+                            <label>
+                                <span>Diarrhea</span>
+                                <input type="range" class="symptom-slider" data-category="ibs" data-symptom="diarrhea" min="0" max="5" value="0">
+                                <span class="slider-value">0</span>
+                            </label>
+                            <label>
+                                <span>Constipation</span>
+                                <input type="range" class="symptom-slider" data-category="ibs" data-symptom="constipation" min="0" max="5" value="0">
+                                <span class="slider-value">0</span>
+                            </label>
+                            <label>
+                                <span>Gas</span>
+                                <input type="range" class="symptom-slider" data-category="ibs" data-symptom="gas" min="0" max="5" value="0">
+                                <span class="slider-value">0</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
             </section>
 

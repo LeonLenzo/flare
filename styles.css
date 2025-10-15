@@ -106,15 +106,37 @@ header h1 {
 /* Date Selector */
 .date-selector {
     margin-bottom: 16px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
 }
 
 .date-selector input {
-    width: 100%;
+    flex: 1;
     padding: 12px;
     border: 2px solid var(--border);
     border-radius: 8px;
     font-size: 16px;
     background: var(--card-bg);
+}
+
+.nav-btn {
+    width: 44px;
+    height: 44px;
+    border: 2px solid var(--border);
+    background: var(--card-bg);
+    border-radius: 8px;
+    font-size: 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    color: var(--primary);
+}
+
+.nav-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
 }
 
 /* Cycle Buttons */
@@ -154,84 +176,78 @@ header h1 {
     text-align: center;
 }
 
-/* Symptoms */
-.symptom-group {
+/* Symptoms Grid */
+.symptoms-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.symptoms-column h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--border);
+}
+
+.slider-group {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-bottom: 16px;
+    gap: 16px;
 }
 
-.symptom-group label {
+.slider-group label {
     display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 15px;
+    flex-direction: column;
+    gap: 6px;
 }
 
-.symptom-group label:has(input:checked) {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-}
-
-.symptom-check {
-    width: 20px;
-    height: 20px;
-    cursor: pointer;
-}
-
-/* Severity Slider */
-.severity-slider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-}
-
-.severity-slider label {
-    font-size: 14px;
+.slider-group label > span:first-child {
+    font-size: 13px;
     font-weight: 600;
-    color: var(--text-light);
+    color: var(--text);
 }
 
-.severity-slider input[type="range"] {
-    flex: 1;
+.symptom-slider {
+    width: 100%;
     height: 6px;
     border-radius: 3px;
     background: var(--border);
     outline: none;
+    cursor: pointer;
 }
 
-.severity-slider input[type="range"]::-webkit-slider-thumb {
+.symptom-slider::-webkit-slider-thumb {
     appearance: none;
-    width: 20px;
-    height: 20px;
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     background: var(--primary);
     cursor: pointer;
 }
 
-.severity-slider input[type="range"]::-moz-range-thumb {
-    width: 20px;
-    height: 20px;
+.symptom-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
     border-radius: 50%;
     background: var(--primary);
     cursor: pointer;
     border: none;
 }
 
-.severity-slider span {
-    min-width: 30px;
-    text-align: right;
+.slider-value {
+    font-size: 12px;
     font-weight: 700;
     color: var(--primary);
+    text-align: center;
+}
+
+@media (max-width: 600px) {
+    .symptoms-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Notes */
