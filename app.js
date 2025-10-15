@@ -141,10 +141,8 @@ function saveDayData() {
     // Save or delete entry
     if (Object.keys(data).length > 0) {
         symptomsData[currentDate] = data;
-        showToast('Entry saved!');
     } else {
         delete symptomsData[currentDate];
-        showToast('Entry cleared');
     }
 
     Storage.set('symptoms', symptomsData);

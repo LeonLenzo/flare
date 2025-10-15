@@ -500,19 +500,18 @@ textarea {
 }
 
 .legend-bar {
-    width: 12px;
-    height: 20px;
-    border-radius: 3px 3px 0 0;
-    border: 2px solid rgba(0, 0, 0, 0.15);
-    border-bottom: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    flex-shrink: 0;
 }
 
 .legend-bar.endo {
-    background: linear-gradient(to top, #5eead4, #99f6e4);
+    background: #5eead4;
 }
 
 .legend-bar.ibs {
-    background: linear-gradient(to top, #93c5fd, #bfdbfe);
+    background: #93c5fd;
 }
 
 /* Insights */
