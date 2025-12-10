@@ -1,18 +1,20 @@
-# Flare - Symptom Tracker
+# Flare - Symptom Tracker v1.1
 
-A clean, mobile-optimized web app for tracking endometriosis and IBS symptoms alongside menstrual cycle data.
+A clean, mobile-optimized web app for tracking custom symptoms alongside menstrual cycle data.
 
 ## Features
 
-- **Daily Symptom Logging**: Track endometriosis and IBS symptoms with severity ratings
-- **Cycle Tracking**: Mark period start and end dates
-- **Calendar View**: Visual overview of periods and symptom days
+- **Custom Symptom Tracking**: Define your own symptoms and track them with 1-5 severity ratings
+- **Quick Daily Logging**: Persistent symptom cards for fast daily entry
+- **Cycle Tracking**: Mark period start and end dates with automatic cycle phase calculation
+- **Calendar View**: Visual overview of periods with total symptom scores
 - **Insights Dashboard**:
-  - Symptom trends over last 30 days
-  - Average symptoms by cycle phase (Menstrual, Follicular, Ovulation, Luteal)
+  - Top 5 symptom trends over last 30 days
+  - Average symptom severity by cycle phase (Menstrual, Follicular, Ovulation, Luteal)
   - Cycle statistics (average period length, cycle length)
 - **Data Export**: Download your data as JSON
 - **Privacy First**: All data stored locally on device using localStorage
+- **Data Migration**: Automatically migrates data from v1.0 format
 
 ## Deployment to GitHub Pages
 

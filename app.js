@@ -10,9 +10,90 @@ let currentDate = new Date().toISOString().split('T')[0];
 let currentCalendarDate = new Date();
 let symptomsData = Storage.get('symptoms') || {};
 let cycleData = Storage.get('cycle') || { periods: [] };
+let allSymptoms = Storage.get('allSymptoms') || new Set(); // Track all unique symptom names
+
+// ===== DATA MIGRATION =====
+function migrateOldData() {
+    let needsMigration = false;
+
+    // Check if we have old-style data (endo/ibs categories)
+    Object.keys(symptomsData).forEach(date => {
+        const dayData = symptomsData[date];
+        if (dayData.endo || dayData.ibs) {
+            needsMigration = true;
+        }
+    });
+
+    if (!needsMigration) return;
+
+    console.log('Migrating old symptom data to new format...');
+
+    // Map old symptom names to readable names
+    const symptomNameMap = {
+        'pelvic-pain': 'Pelvic Pain',
+        'cramps': 'Cramps',
+        'back-pain': 'Back Pain',
+        'fatigue': 'Fatigue',
+        'nausea': 'Nausea',
+        'abdominal-pain': 'Abdominal Pain',
+        'bloating': 'Bloating',
+        'diarrhea': 'Diarrhea',
+        'constipation': 'Constipation',
+        'gas': 'Gas'
+    };
+
+    // Migrate each day's data
+    Object.keys(symptomsData).forEach(date => {
+        const dayData = symptomsData[date];
+        const newSymptoms = {};
+
+        // Migrate endo symptoms
+        if (dayData.endo) {
+            Object.entries(dayData.endo).forEach(([key, value]) => {
+                const name = symptomNameMap[key] || key;
+                newSymptoms[name] = value;
+            });
+            delete dayData.endo;
+        }
+
+        // Migrate ibs symptoms
+        if (dayData.ibs) {
+            Object.entries(dayData.ibs).forEach(([key, value]) => {
+                const name = symptomNameMap[key] || key;
+                newSymptoms[name] = value;
+            });
+            delete dayData.ibs;
+        }
+
+        // Set new symptoms format
+        if (Object.keys(newSymptoms).length > 0) {
+            dayData.symptoms = newSymptoms;
+        }
+    });
+
+    // Save migrated data
+    Storage.set('symptoms', symptomsData);
+    console.log('Migration complete!');
+}
 
 // ===== INITIALIZATION =====
 document.addEventListener('DOMContentLoaded', () => {
+    // Migrate old data format if needed
+    migrateOldData();
+
+    // Load allSymptoms from existing data if not set
+    if (!Array.isArray(allSymptoms) && !(allSymptoms instanceof Set)) {
+        allSymptoms = new Set();
+        Object.values(symptomsData).forEach(dayData => {
+            if (dayData.symptoms) {
+                Object.keys(dayData.symptoms).forEach(symptom => allSymptoms.add(symptom));
+            }
+        });
+        Storage.set('allSymptoms', Array.from(allSymptoms));
+    } else if (Array.isArray(allSymptoms)) {
+        allSymptoms = new Set(allSymptoms);
+    }
+
     initializeTabs();
     initializeLogTab();
     initializeCalendar();
@@ -75,13 +156,12 @@ function initializeLogTab() {
         });
     });
 
-    // Symptom sliders - auto save on change
-    document.querySelectorAll('.symptom-slider').forEach(slider => {
-        const valueDisplay = slider.nextElementSibling;
-        slider.addEventListener('input', () => {
-            valueDisplay.textContent = slider.value;
-            saveDayData();
-        });
+    // Add new symptom type button
+    document.getElementById('add-symptom-btn').addEventListener('click', addNewSymptomType);
+
+    // Allow Enter key to add new symptom type
+    document.getElementById('symptom-name-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') addNewSymptomType();
     });
 
     // Notes - auto save on change
@@ -91,51 +171,175 @@ function initializeLogTab() {
 
     loadDayData();
     updateCycleStatus();
+    renderAvailableSymptoms();
 }
 
 function loadDayData() {
     const data = symptomsData[currentDate] || {};
 
-    // Load symptom sliders
-    document.querySelectorAll('.symptom-slider').forEach(slider => {
-        const category = slider.dataset.category;
-        const symptom = slider.dataset.symptom;
-        const value = data[category]?.[symptom] || 0;
-        slider.value = value;
-        slider.nextElementSibling.textContent = value;
-    });
-
     // Load notes
     document.getElementById('daily-notes').value = data.notes || '';
+
+    // Re-render available symptoms with current day's values
+    renderAvailableSymptoms();
 
     // Update cycle button states
     updateCycleStatus();
 }
 
-function saveDayData() {
-    const data = {
-        endo: {},
-        ibs: {},
-    };
+function renderAvailableSymptoms() {
+    const container = document.getElementById('available-symptoms');
+    container.innerHTML = '';
 
-    // Save symptom values from sliders
-    document.querySelectorAll('.symptom-slider').forEach(slider => {
-        const category = slider.dataset.category;
-        const symptom = slider.dataset.symptom;
-        const value = parseInt(slider.value);
-        if (value > 0) {
-            data[category][symptom] = value;
+    const currentDayData = symptomsData[currentDate] || {};
+    const currentSymptoms = currentDayData.symptoms || {};
+
+    if (allSymptoms.size === 0) {
+        container.innerHTML = '<p class="no-symptoms">No symptom types yet. Add your first symptom below.</p>';
+        return;
+    }
+
+    // Sort symptoms alphabetically
+    const sortedSymptoms = Array.from(allSymptoms).sort();
+
+    sortedSymptoms.forEach(symptomName => {
+        const item = document.createElement('div');
+        item.className = 'symptom-quick-log';
+
+        const currentValue = currentSymptoms[symptomName] || 0;
+
+        item.innerHTML = `
+            <div class="symptom-quick-log-header">
+                <span class="symptom-name">${symptomName}</span>
+                <button class="delete-symptom-type-btn" data-symptom="${symptomName}" title="Delete this symptom type">🗑️</button>
+            </div>
+            <div class="symptom-quick-log-input">
+                <input type="number"
+                       class="severity-input"
+                       data-symptom="${symptomName}"
+                       min="0"
+                       max="5"
+                       value="${currentValue}"
+                       placeholder="0">
+                <span class="severity-label">/5</span>
+            </div>
+        `;
+
+        // Handle severity input changes
+        const input = item.querySelector('.severity-input');
+        input.addEventListener('input', (e) => {
+            updateSymptomValue(symptomName, parseInt(e.target.value) || 0);
+        });
+
+        // Handle delete button
+        const deleteBtn = item.querySelector('.delete-symptom-type-btn');
+        deleteBtn.addEventListener('click', () => {
+            deleteSymptomType(symptomName);
+        });
+
+        container.appendChild(item);
+    });
+}
+
+function updateSymptomValue(symptomName, value) {
+    // Get or create day data
+    let data = symptomsData[currentDate] || {};
+    if (!data.symptoms) data.symptoms = {};
+
+    if (value > 0 && value <= 5) {
+        data.symptoms[symptomName] = value;
+    } else {
+        // Remove symptom if value is 0 or invalid
+        delete data.symptoms[symptomName];
+    }
+
+    // Clean up empty objects
+    if (Object.keys(data.symptoms).length === 0) {
+        delete data.symptoms;
+    }
+
+    if (Object.keys(data).length === 0) {
+        delete symptomsData[currentDate];
+    } else {
+        symptomsData[currentDate] = data;
+    }
+
+    Storage.set('symptoms', symptomsData);
+
+    // Re-render calendar if visible
+    if (document.getElementById('calendar-tab').classList.contains('active')) {
+        renderCalendar();
+    }
+}
+
+function addNewSymptomType() {
+    const nameInput = document.getElementById('symptom-name-input');
+    const name = nameInput.value.trim();
+
+    if (!name) {
+        alert('Please enter a symptom name');
+        return;
+    }
+
+    if (allSymptoms.has(name)) {
+        alert('This symptom type already exists');
+        nameInput.value = '';
+        return;
+    }
+
+    // Add to global symptom list
+    allSymptoms.add(name);
+    Storage.set('allSymptoms', Array.from(allSymptoms));
+
+    // Clear input and re-render
+    nameInput.value = '';
+    renderAvailableSymptoms();
+    nameInput.focus();
+}
+
+function deleteSymptomType(symptomName) {
+    if (!confirm(`Delete "${symptomName}" from your symptom types? This will remove it from all past entries.`)) {
+        return;
+    }
+
+    // Remove from global list
+    allSymptoms.delete(symptomName);
+    Storage.set('allSymptoms', Array.from(allSymptoms));
+
+    // Remove from all historical data
+    Object.keys(symptomsData).forEach(date => {
+        const dayData = symptomsData[date];
+        if (dayData.symptoms && dayData.symptoms[symptomName]) {
+            delete dayData.symptoms[symptomName];
+
+            // Clean up empty objects
+            if (Object.keys(dayData.symptoms).length === 0) {
+                delete dayData.symptoms;
+            }
+            if (Object.keys(dayData).length === 0) {
+                delete symptomsData[date];
+            }
         }
     });
 
-    // Remove empty categories
-    if (Object.keys(data.endo).length === 0) delete data.endo;
-    if (Object.keys(data.ibs).length === 0) delete data.ibs;
+    Storage.set('symptoms', symptomsData);
+    renderAvailableSymptoms();
+
+    // Re-render calendar if visible
+    if (document.getElementById('calendar-tab').classList.contains('active')) {
+        renderCalendar();
+    }
+}
+
+function saveDayData() {
+    const data = symptomsData[currentDate] || {};
 
     // Save notes
     const notes = document.getElementById('daily-notes').value.trim();
     if (notes) {
         data.notes = notes;
+    } else {
+        delete data.notes;
     }
 
     // Save or delete entry
@@ -414,34 +618,16 @@ function renderCalendar() {
         dayNumber.textContent = i;
         day.appendChild(dayNumber);
 
-        // Calculate and display symptom scores as bars
+        // Calculate and display total symptom score as number
         const data = symptomsData[date];
-        const scoresDiv = document.createElement('div');
-        scoresDiv.className = 'calendar-day-scores';
-
-        // Calculate average endo score and create bar
-        if (data?.endo) {
-            const endoValues = Object.values(data.endo);
-            const endoAvg = endoValues.reduce((a, b) => a + b, 0) / endoValues.length;
-            const endoBar = document.createElement('div');
-            endoBar.className = 'score-bar endo';
-            endoBar.style.height = `${(endoAvg / 5) * 100}%`;
-            endoBar.title = `Endo: ${endoAvg.toFixed(1)}`;
-            scoresDiv.appendChild(endoBar);
+        if (data?.symptoms) {
+            const symptomValues = Object.values(data.symptoms);
+            const symptomTotal = symptomValues.reduce((a, b) => a + b, 0);
+            const totalDiv = document.createElement('div');
+            totalDiv.className = 'calendar-day-total';
+            totalDiv.textContent = symptomTotal;
+            day.appendChild(totalDiv);
         }
-
-        // Calculate average IBS score and create bar
-        if (data?.ibs) {
-            const ibsValues = Object.values(data.ibs);
-            const ibsAvg = ibsValues.reduce((a, b) => a + b, 0) / ibsValues.length;
-            const ibsBar = document.createElement('div');
-            ibsBar.className = 'score-bar ibs';
-            ibsBar.style.height = `${(ibsAvg / 5) * 100}%`;
-            ibsBar.title = `IBS: ${ibsAvg.toFixed(1)}`;
-            scoresDiv.appendChild(ibsBar);
-        }
-
-        day.appendChild(scoresDiv);
 
         day.addEventListener('click', () => {
             currentDate = date;
@@ -534,25 +720,51 @@ function renderSymptomTrends() {
         dates.push(date.toISOString().split('T')[0]);
     }
 
-    const endoData = dates.map(date => {
+    // Collect all symptoms that appear in the last 30 days
+    const symptomOccurrences = {};
+    dates.forEach(date => {
         const data = symptomsData[date];
-        if (!data?.endo) return 0;
-        // Calculate average of all endo symptoms
-        const values = Object.values(data.endo);
-        return values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+        if (data?.symptoms) {
+            Object.keys(data.symptoms).forEach(symptom => {
+                symptomOccurrences[symptom] = (symptomOccurrences[symptom] || 0) + 1;
+            });
+        }
     });
 
-    const ibsData = dates.map(date => {
-        const data = symptomsData[date];
-        if (!data?.ibs) return 0;
-        // Calculate average of all IBS symptoms
-        const values = Object.values(data.ibs);
-        return values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-    });
+    // Get top 5 most frequent symptoms
+    const topSymptoms = Object.entries(symptomOccurrences)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([symptom]) => symptom);
+
+    // Generate colors for each symptom
+    const colors = [
+        { border: '#5eead4', bg: 'rgba(94, 234, 212, 0.2)' },
+        { border: '#93c5fd', bg: 'rgba(147, 197, 253, 0.2)' },
+        { border: '#f9a8d4', bg: 'rgba(249, 168, 212, 0.2)' },
+        { border: '#fbbf24', bg: 'rgba(251, 191, 36, 0.2)' },
+        { border: '#a78bfa', bg: 'rgba(167, 139, 250, 0.2)' }
+    ];
 
     const labels = dates.map(date => {
         const d = new Date(date);
         return d.getDate();
+    });
+
+    const datasets = topSymptoms.map((symptom, index) => {
+        const data = dates.map(date => {
+            const dayData = symptomsData[date];
+            return dayData?.symptoms?.[symptom] || 0;
+        });
+
+        return {
+            label: symptom,
+            data: data,
+            borderColor: colors[index].border,
+            backgroundColor: colors[index].bg,
+            tension: 0.3,
+            fill: true
+        };
     });
 
     if (window.symptomChart) window.symptomChart.destroy();
@@ -561,24 +773,7 @@ function renderSymptomTrends() {
         type: 'line',
         data: {
             labels: labels,
-            datasets: [
-                {
-                    label: 'Endo Severity',
-                    data: endoData,
-                    borderColor: '#5eead4',
-                    backgroundColor: 'rgba(94, 234, 212, 0.2)',
-                    tension: 0.3,
-                    fill: true
-                },
-                {
-                    label: 'IBS Severity',
-                    data: ibsData,
-                    borderColor: '#93c5fd',
-                    backgroundColor: 'rgba(147, 197, 253, 0.2)',
-                    tension: 0.3,
-                    fill: true
-                }
-            ]
+            datasets: datasets
         },
         options: {
             responsive: true,
@@ -605,39 +800,27 @@ function renderPhaseChart() {
     const canvas = document.getElementById('phase-chart');
     const ctx = canvas.getContext('2d');
 
-    // Calculate average severity by phase
+    // Calculate average severity by phase for all symptoms
     const phaseData = {
-        'Menstrual': { endo: [], ibs: [] },
-        'Follicular': { endo: [], ibs: [] },
-        'Ovulation': { endo: [], ibs: [] },
-        'Luteal': { endo: [], ibs: [] }
+        'Menstrual': [],
+        'Follicular': [],
+        'Ovulation': [],
+        'Luteal': []
     };
 
     Object.keys(symptomsData).forEach(date => {
         const phase = getCyclePhase(date);
         const data = symptomsData[date];
 
-        if (phaseData[phase]) {
-            if (data.endo) {
-                const endoValues = Object.values(data.endo);
-                const endoAvg = endoValues.reduce((a, b) => a + b, 0) / endoValues.length;
-                phaseData[phase].endo.push(endoAvg);
-            }
-            if (data.ibs) {
-                const ibsValues = Object.values(data.ibs);
-                const ibsAvg = ibsValues.reduce((a, b) => a + b, 0) / ibsValues.length;
-                phaseData[phase].ibs.push(ibsAvg);
-            }
+        if (phaseData[phase] && data?.symptoms) {
+            const symptomValues = Object.values(data.symptoms);
+            const symptomAvg = symptomValues.reduce((a, b) => a + b, 0) / symptomValues.length;
+            phaseData[phase].push(symptomAvg);
         }
     });
 
-    const avgEndo = Object.keys(phaseData).map(phase => {
-        const values = phaseData[phase].endo;
-        return values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
-    });
-
-    const avgIbs = Object.keys(phaseData).map(phase => {
-        const values = phaseData[phase].ibs;
+    const avgByPhase = Object.keys(phaseData).map(phase => {
+        const values = phaseData[phase];
         return values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
     });
 
@@ -649,14 +832,9 @@ function renderPhaseChart() {
             labels: ['Menstrual', 'Follicular', 'Ovulation', 'Luteal'],
             datasets: [
                 {
-                    label: 'Avg Endo Severity',
-                    data: avgEndo,
-                    backgroundColor: 'rgba(94, 234, 212, 0.8)'
-                },
-                {
-                    label: 'Avg IBS Severity',
-                    data: avgIbs,
-                    backgroundColor: 'rgba(147, 197, 253, 0.8)'
+                    label: 'Avg Symptom Severity',
+                    data: avgByPhase,
+                    backgroundColor: 'rgba(139, 92, 246, 0.8)'
                 }
             ]
         },

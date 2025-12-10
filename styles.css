@@ -176,77 +176,132 @@ header h1 {
     text-align: center;
 }
 
-/* Symptoms Grid */
-.symptoms-grid {
+/* Symptoms */
+#available-symptoms {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
 }
 
-.symptoms-column h3 {
-    font-size: 16px;
-    font-weight: 700;
-    color: var(--primary);
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 2px solid var(--border);
+.no-symptoms {
+    color: var(--text-light);
+    font-size: 14px;
+    text-align: center;
+    padding: 20px;
+    grid-column: 1 / -1;
 }
 
-.slider-group {
+.symptom-quick-log {
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.2s;
+}
+
+.symptom-quick-log:hover {
+    border-color: var(--primary);
+}
+
+.symptom-quick-log-header {
     display: flex;
-    flex-direction: column;
-    gap: 16px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
 }
 
-.slider-group label {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.slider-group label > span:first-child {
-    font-size: 13px;
+.symptom-name {
+    font-size: 15px;
     font-weight: 600;
     color: var(--text);
 }
 
-.symptom-slider {
-    width: 100%;
-    height: 6px;
-    border-radius: 3px;
-    background: var(--border);
-    outline: none;
-    cursor: pointer;
-    touch-action: none;
-}
-
-.symptom-slider::-webkit-slider-thumb {
-    appearance: none;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--primary);
-    cursor: pointer;
-}
-
-.symptom-slider::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background: var(--primary);
-    cursor: pointer;
+.delete-symptom-type-btn {
+    background: none;
     border: none;
+    font-size: 16px;
+    cursor: pointer;
+    opacity: 0.5;
+    transition: all 0.2s;
+    padding: 4px;
 }
 
-.slider-value {
-    font-size: 12px;
+.delete-symptom-type-btn:hover {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.symptom-quick-log-input {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.severity-input {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    font-size: 18px;
     font-weight: 700;
-    color: var(--primary);
     text-align: center;
+    background: var(--card-bg);
+    color: var(--primary);
+}
+
+.severity-input:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.severity-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+.add-new-symptom-section {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border);
+}
+
+.add-new-symptom-section h3 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+    margin-bottom: 12px;
+}
+
+.add-symptom-form {
+    display: flex;
+    gap: 8px;
+}
+
+#symptom-name-input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    background: var(--card-bg);
+}
+
+#symptom-name-input:focus {
+    outline: none;
+    border-color: var(--primary);
+}
+
+#add-symptom-btn {
+    padding: 12px 20px;
+    margin-bottom: 0;
+    white-space: nowrap;
 }
 
 @media (max-width: 600px) {
-    .symptoms-grid {
+    #available-symptoms {
         grid-template-columns: 1fr;
     }
 }
@@ -390,32 +445,13 @@ textarea {
     margin-bottom: auto;
 }
 
-.calendar-day-scores {
-    display: flex;
-    gap: 6px;
-    justify-content: center;
-    align-items: flex-end;
+.calendar-day-total {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary);
+    text-align: center;
     margin-top: auto;
-    height: 45px;
     padding-bottom: 4px;
-}
-
-.score-bar {
-    width: 14px;
-    border-radius: 3px 3px 0 0;
-    transition: all 0.2s;
-    border: 2px solid rgba(0, 0, 0, 0.15);
-    border-bottom: none;
-}
-
-.score-bar.endo {
-    background: linear-gradient(to top, #5eead4, #99f6e4);
-    box-shadow: 0 2px 4px rgba(94, 234, 212, 0.4);
-}
-
-.score-bar.ibs {
-    background: linear-gradient(to top, #93c5fd, #bfdbfe);
-    box-shadow: 0 2px 4px rgba(147, 197, 253, 0.4);
 }
 
 /* Cycle phase colors - warm pastels as gradients */
@@ -446,8 +482,7 @@ textarea {
 
 .calendar-legend-container {
     display: flex;
-    justify-content: space-around;
-    gap: 32px;
+    justify-content: center;
     margin-top: 16px;
     padding: 16px;
     background: var(--card-bg);
@@ -455,18 +490,22 @@ textarea {
     box-shadow: var(--shadow);
 }
 
+.legend-section {
+    text-align: center;
+}
+
 .legend-section h4 {
     font-size: 13px;
     font-weight: 700;
     color: var(--text);
     margin-bottom: 12px;
-    text-align: center;
 }
 
 .legend-items {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 8px;
+    margin-bottom: 12px;
 }
 
 .legend-item {
@@ -474,6 +513,20 @@ textarea {
     align-items: center;
     gap: 6px;
     font-size: 12px;
+}
+
+.legend-note {
+    font-size: 11px;
+    color: var(--text-light);
+    margin-top: 8px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.symptom-score-highlight {
+    font-weight: 700;
+    color: var(--primary);
 }
 
 .legend-color {
@@ -506,12 +559,18 @@ textarea {
     flex-shrink: 0;
 }
 
-.legend-bar.endo {
-    background: #5eead4;
-}
-
-.legend-bar.ibs {
-    background: #93c5fd;
+.legend-number {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--bg);
 }
 
 /* Insights */
@@ -587,14 +646,6 @@ canvas {
         font-size: 10px;
     }
 
-    .calendar-day-scores {
-        height: 35px;
-    }
-
-    .score-bar {
-        width: 10px;
-    }
-
     .calendar-day.header {
         font-size: 10px;
         padding: 4px 2px;
@@ -626,15 +677,6 @@ canvas {
 
     .calendar-day-number {
         font-size: 9px;
-    }
-
-    .calendar-day-scores {
-        height: 30px;
-        gap: 4px;
-    }
-
-    .score-bar {
-        width: 8px;
     }
 }
 .auto-save-indicator {

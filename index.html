@@ -39,66 +39,12 @@
 
             <section class="card">
                 <h2>Symptoms</h2>
-                <div class="symptoms-grid">
-                    <div class="symptoms-column">
-                        <h3>Endometriosis</h3>
-                        <div class="slider-group">
-                            <label>
-                                <span>Pelvic Pain</span>
-                                <input type="range" class="symptom-slider" data-category="endo" data-symptom="pelvic-pain" min="0" max="5" value="0">
-                                <span class="slider-value">0</span>
-                            </label>
-                            <label>
-                                <span>Cramps</span>
-                                <input type="range" class="symptom-slider" data-category="endo" data-symptom="cramps" min="0" max="5" value="0">
-                                <span class="slider-value">0</span>
-                            </label>
-                            <label>
-                                <span>Back Pain</span>
-                                <input type="range" class="symptom-slider" data-category="endo" data-symptom="back-pain" min="0" max="5" value="0">
-                                <span class="slider-value">0</span>
-                            </label>
-                            <label>
-                                <span>Fatigue</span>
-                                <input type="range" class="symptom-slider" data-category="endo" data-symptom="fatigue" min="0" max="5" value="0">
-                                <span class="slider-value">0</span>
-                            </label>
-                            <label>
-                                <span>Nausea</span>
-                                <input type="range" class="symptom-slider" data-category="endo" data-symptom="nausea" min="0" max="5" value="0">
-                                <span class="slider-value">0</span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="symptoms-column">
-                        <h3>IBS</h3>
-                        <div class="slider-group">
-                            <label>
-                                <span>Abdominal Pain</span>
-                                <input type="range" class="symptom-slider" data-category="ibs" data-symptom="abdominal-pain" min="0" max="5" value="0">
-                                <span class="slider-value">0</span>
-                            </label>
-                            <label>
-                                <span>Bloating</span>
-                                <input type="range" class="symptom-slider" data-category="ibs" data-symptom="bloating" min="0" max="5" value="0">
-                                <span class="slider-value">0</span>
-                            </label>
-                            <label>
-                                <span>Diarrhea</span>
-                                <input type="range" class="symptom-slider" data-category="ibs" data-symptom="diarrhea" min="0" max="5" value="0">
-                                <span class="slider-value">0</span>
-                            </label>
-                            <label>
-                                <span>Constipation</span>
-                                <input type="range" class="symptom-slider" data-category="ibs" data-symptom="constipation" min="0" max="5" value="0">
-                                <span class="slider-value">0</span>
-                            </label>
-                            <label>
-                                <span>Gas</span>
-                                <input type="range" class="symptom-slider" data-category="ibs" data-symptom="gas" min="0" max="5" value="0">
-                                <span class="slider-value">0</span>
-                            </label>
-                        </div>
+                <div id="available-symptoms"></div>
+                <div class="add-new-symptom-section">
+                    <h3>Add New Symptom Type</h3>
+                    <div class="add-symptom-form">
+                        <input type="text" id="symptom-name-input" placeholder="New symptom name" autocomplete="off">
+                        <button id="add-symptom-btn" class="secondary-btn">Add New</button>
                     </div>
                 </div>
             </section>
@@ -142,19 +88,7 @@
                             <span>Luteal</span>
                         </div>
                     </div>
-                </div>
-                <div class="legend-section">
-                    <h4>Symptoms</h4>
-                    <div class="legend-items">
-                        <div class="legend-item">
-                            <span class="legend-bar endo"></span>
-                            <span>Endo</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-bar ibs"></span>
-                            <span>IBS</span>
-                        </div>
-                    </div>
+                    <p class="legend-note"><span class="symptom-score-highlight">Symptom Score</span> is Given as the Sum of All Symptoms Severities</p>
                 </div>
             </div>
         </div>
