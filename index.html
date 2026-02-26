@@ -8,25 +8,32 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>flare.up</h1>
-            <p class="subtitle">Track symptoms & cycles</p>
-        </header>
+    <div class="sticky-header">
+        <div class="container">
+            <header>
+                <h1>flare.up 🔥</h1>
+                <p class="subtitle">Track symptoms & cycles</p>
+            </header>
 
-        <nav class="tab-nav">
-            <button class="tab-btn" data-tab="log">Log</button>
-            <button class="tab-btn active" data-tab="calendar">Calendar</button>
-            <button class="tab-btn" data-tab="insights">Insights</button>
-        </nav>
+            <nav class="tab-nav">
+                <button class="tab-btn active" data-tab="log">Log</button>
+                <button class="tab-btn" data-tab="calendar">Calendar</button>
+            </nav>
+
+            <div class="date-display-bar">
+                <button class="nav-btn" id="prev-day">‹</button>
+                <div class="current-date-display" id="current-date-display"></div>
+                <button class="nav-btn" id="next-day">›</button>
+                <input type="date" id="date-picker-input" style="position: absolute; opacity: 0; pointer-events: none;">
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
 
         <!-- LOG TAB -->
-        <div class="tab-content" id="log-tab">
-            <div class="date-selector">
-                <button class="nav-btn" id="prev-day">‹</button>
-                <input type="date" id="log-date" />
-                <button class="nav-btn" id="next-day">›</button>
-            </div>
+        <div class="tab-content active" id="log-tab">
+            <input type="date" id="log-date" style="display: none;" />
 
             <section class="card">
                 <h2>Cycle</h2>
@@ -38,7 +45,7 @@
             </section>
 
             <section class="card">
-                <h2>Daily Log</h2>
+                <h2>Symptoms</h2>
                 <div class="flare-rating-container">
                     <label for="flare-rating">Flare rating (0-5)</label>
                     <input type="number" id="flare-rating" min="0" max="5" value="0" placeholder="0">
@@ -51,42 +58,54 @@
             </section>
 
             <section class="card">
-                <h2>Food Diary</h2>
+                <h2>Food</h2>
                 <div class="food-diary-grid">
                     <div class="food-entry">
-                        <label for="food-breakfast">Breakfast</label>
-                        <textarea id="food-breakfast" rows="2" placeholder="What did you have..."></textarea>
+                        <div class="food-entry-header">
+                            <label class="trigger-checkbox">
+                                <input type="checkbox" id="trigger-breakfast">
+                                <span>Trigger?</span>
+                            </label>
+                        </div>
+                        <textarea id="food-breakfast" rows="2" placeholder="Breakfast"></textarea>
                     </div>
                     <div class="food-entry">
-                        <label for="food-lunch">Lunch</label>
-                        <textarea id="food-lunch" rows="2" placeholder="What did you have..."></textarea>
+                        <div class="food-entry-header">
+                            <label class="trigger-checkbox">
+                                <input type="checkbox" id="trigger-lunch">
+                                <span>Trigger?</span>
+                            </label>
+                        </div>
+                        <textarea id="food-lunch" rows="2" placeholder="Lunch"></textarea>
                     </div>
                     <div class="food-entry">
-                        <label for="food-dinner">Dinner</label>
-                        <textarea id="food-dinner" rows="2" placeholder="What did you have..."></textarea>
+                        <div class="food-entry-header">
+                            <label class="trigger-checkbox">
+                                <input type="checkbox" id="trigger-dinner">
+                                <span>Trigger?</span>
+                            </label>
+                        </div>
+                        <textarea id="food-dinner" rows="2" placeholder="Dinner"></textarea>
                     </div>
                     <div class="food-entry">
-                        <label for="food-snacks">Snacks</label>
-                        <textarea id="food-snacks" rows="2" placeholder="What did you have..."></textarea>
+                        <div class="food-entry-header">
+                            <label class="trigger-checkbox">
+                                <input type="checkbox" id="trigger-snacks">
+                                <span>Trigger?</span>
+                            </label>
+                        </div>
+                        <textarea id="food-snacks" rows="2" placeholder="Snacks"></textarea>
                     </div>
                 </div>
             </section>
         </div>
 
         <!-- CALENDAR TAB -->
-        <div class="tab-content active" id="calendar-tab">
-            <div class="calendar-header">
-                <button class="nav-btn" id="prev-month">‹</button>
-                <div class="calendar-selectors">
-                    <select id="month-select"></select>
-                    <select id="year-select"></select>
-                </div>
-                <button class="nav-btn" id="next-month">›</button>
-            </div>
-            <div class="calendar-grid" id="calendar-grid"></div>
-            <div class="calendar-legend-container">
-                <div class="legend-section">
-                    <h4>Cycle Phase</h4>
+        <div class="tab-content" id="calendar-tab">
+            <section class="card">
+                <div class="calendar-grid" id="calendar-grid"></div>
+
+                <div class="calendar-legend">
                     <div class="legend-items">
                         <div class="legend-item">
                             <span class="legend-color menstrual"></span>
@@ -105,31 +124,37 @@
                             <span>Luteal</span>
                         </div>
                     </div>
-                    <p class="legend-note"><span class="symptom-score-highlight">Flare Rating</span> is shown on calendar days (0-5)</p>
                 </div>
-            </div>
-        </div>
+            </section>
 
-        <!-- INSIGHTS TAB -->
-        <div class="tab-content" id="insights-tab">
             <section class="card">
                 <h2>Cycle Summary</h2>
-                <div id="cycle-summary"></div>
-            </section>
-
-            <section class="card">
-                <h2>Flare Trends (Last 30 Days)</h2>
-                <canvas id="flare-chart"></canvas>
-            </section>
-
-            <section class="card">
-                <h2>Flare Rating by Cycle Phase</h2>
-                <canvas id="phase-chart"></canvas>
+                <div class="cycle-summary-grid" id="cycle-summary"></div>
             </section>
 
             <div class="export-section">
                 <button id="export-data" class="secondary-btn">Export Data (JSON)</button>
                 <button id="clear-data" class="danger-btn">Clear All Data</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Welcome Overlay -->
+    <div id="welcome-overlay" class="overlay" style="display: none;">
+        <div class="overlay-content">
+            <h2>Welcome to Flare v2.0! 🔥</h2>
+            <p>We've simplified the app to make tracking easier:</p>
+            <ul>
+                <li><strong>Simplified Tracking:</strong> Just rate your flare from 0-5 each day</li>
+                <li><strong>Food Diary:</strong> Track meals and mark potential trigger foods</li>
+                <li><strong>Date Selector:</strong> Click the date at the top to jump to any day</li>
+                <li><strong>Calendar Indicators:</strong> 🔥 = flare rating, ❌ = trigger food</li>
+                <li><strong>Two Tabs:</strong> Log (daily entry) and Calendar (overview)</li>
+            </ul>
+            <p class="note">Your old symptom data has been converted to flare ratings automatically.</p>
+            <div class="overlay-buttons">
+                <button id="dont-show-again" class="secondary-btn">Don't show again</button>
+                <button id="close-overlay" class="primary-btn">Got it!</button>
             </div>
         </div>
     </div>

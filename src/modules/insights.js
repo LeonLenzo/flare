@@ -3,18 +3,12 @@ import { getCycleDay, getCyclePhase } from './cycle.js';
 import { exportData, clearAllData } from './ui.js';
 
 // ===== INSIGHTS =====
-export function initializeInsights() {
+export function initializeDataButtons() {
     document.getElementById('export-data').addEventListener('click', exportData);
     document.getElementById('clear-data').addEventListener('click', clearAllData);
 }
 
-export function renderInsights() {
-    renderCycleSummary();
-    renderFlareChart();
-    renderPhaseChart();
-}
-
-function renderCycleSummary() {
+export function renderCycleSummary() {
     const summaryDiv = document.getElementById('cycle-summary');
 
     if (!state.cycleData.periods || state.cycleData.periods.length === 0) {

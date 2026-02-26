@@ -3,72 +3,14 @@ import { getCyclePhase } from './cycle.js';
 
 // ===== CALENDAR =====
 export function initializeCalendar() {
-    // Populate month dropdown
-    const monthSelect = document.getElementById('month-select');
-    const months = ['January', 'February', 'March', 'April', 'May', 'June',
-                    'July', 'August', 'September', 'October', 'November', 'December'];
-
-    monthSelect.innerHTML = '';
-    months.forEach((month, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = month;
-        monthSelect.appendChild(option);
-    });
-
-    // Populate year dropdown (current year ± 5 years)
-    const yearSelect = document.getElementById('year-select');
-    yearSelect.innerHTML = '';
-    const currentYear = new Date().getFullYear();
-    for (let year = currentYear - 5; year <= currentYear + 5; year++) {
-        const option = document.createElement('option');
-        option.value = year;
-        option.textContent = year;
-        yearSelect.appendChild(option);
-    }
-
-    // Set current month and year
-    monthSelect.value = state.currentCalendarDate.getMonth();
-    yearSelect.value = state.currentCalendarDate.getFullYear();
-
-    // Month/Year dropdown change handlers
-    monthSelect.addEventListener('change', () => {
-        state.currentCalendarDate.setMonth(parseInt(monthSelect.value));
-        renderCalendar();
-    });
-
-    yearSelect.addEventListener('change', () => {
-        state.currentCalendarDate.setFullYear(parseInt(yearSelect.value));
-        renderCalendar();
-    });
-
-    // Previous/Next month buttons
-    document.getElementById('prev-month').addEventListener('click', () => {
-        state.currentCalendarDate.setMonth(state.currentCalendarDate.getMonth() - 1);
-        monthSelect.value = state.currentCalendarDate.getMonth();
-        yearSelect.value = state.currentCalendarDate.getFullYear();
-        renderCalendar();
-    });
-
-    document.getElementById('next-month').addEventListener('click', () => {
-        state.currentCalendarDate.setMonth(state.currentCalendarDate.getMonth() + 1);
-        monthSelect.value = state.currentCalendarDate.getMonth();
-        yearSelect.value = state.currentCalendarDate.getFullYear();
-        renderCalendar();
-    });
-
+    // Calendar is now controlled by the top date selector
+    // Just render the initial calendar
     renderCalendar();
 }
 
 export function renderCalendar() {
     const year = state.currentCalendarDate.getFullYear();
     const month = state.currentCalendarDate.getMonth();
-
-    // Update dropdowns to match current date
-    const monthSelect = document.getElementById('month-select');
-    const yearSelect = document.getElementById('year-select');
-    if (monthSelect) monthSelect.value = month;
-    if (yearSelect) yearSelect.value = year;
 
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -101,6 +43,7 @@ export function renderCalendar() {
         day.className = 'calendar-day';
 
         if (date === today) day.classList.add('today');
+        if (date === state.currentDate) day.classList.add('selected');
 
         // Get cycle phase
         const phase = getCyclePhase(date);
@@ -115,13 +58,28 @@ export function renderCalendar() {
         dayNumber.textContent = i;
         day.appendChild(dayNumber);
 
-        // Display flare rating if available
+        // Display flare rating as flame emoji
         const data = state.symptomsData[date];
-        if (data?.flareRating) {
+        if (data?.flareRating && data.flareRating > 0) {
             const flareDiv = document.createElement('div');
-            flareDiv.className = 'calendar-day-total';
-            flareDiv.textContent = data.flareRating;
+            flareDiv.className = 'calendar-day-flare';
+            flareDiv.setAttribute('data-flare-level', data.flareRating);
+            flareDiv.textContent = '🔥';
             day.appendChild(flareDiv);
+        }
+
+        // Display trigger food indicator
+        if (data?.food) {
+            const hasTrigger = data.food.triggerBreakfast ||
+                             data.food.triggerLunch ||
+                             data.food.triggerDinner ||
+                             data.food.triggerSnacks;
+            if (hasTrigger) {
+                const triggerDiv = document.createElement('div');
+                triggerDiv.className = 'calendar-day-trigger';
+                triggerDiv.textContent = '❌';
+                day.appendChild(triggerDiv);
+            }
         }
 
         day.addEventListener('click', () => {

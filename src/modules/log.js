@@ -11,12 +11,35 @@ export function initializeLogTab() {
         loadDayData();
     });
 
+    // Update date display
+    updateDateDisplay();
+
+    // Date picker functionality
+    const datePickerInput = document.getElementById('date-picker-input');
+    const dateDisplay = document.getElementById('current-date-display');
+
+    dateDisplay.style.cursor = 'pointer';
+    dateDisplay.addEventListener('click', () => {
+        datePickerInput.value = state.currentDate;
+        datePickerInput.showPicker();
+    });
+
+    datePickerInput.addEventListener('change', (e) => {
+        state.currentDate = e.target.value;
+        dateInput.value = state.currentDate;
+        updateDateDisplay();
+        updateCalendarFromDate();
+        loadDayData();
+    });
+
     // Day navigation
     document.getElementById('prev-day').addEventListener('click', () => {
         const date = new Date(state.currentDate);
         date.setDate(date.getDate() - 1);
         state.currentDate = date.toISOString().split('T')[0];
         dateInput.value = state.currentDate;
+        updateDateDisplay();
+        updateCalendarFromDate();
         loadDayData();
     });
 
@@ -25,6 +48,8 @@ export function initializeLogTab() {
         date.setDate(date.getDate() + 1);
         state.currentDate = date.toISOString().split('T')[0];
         dateInput.value = state.currentDate;
+        updateDateDisplay();
+        updateCalendarFromDate();
         loadDayData();
     });
 
@@ -52,6 +77,9 @@ export function initializeLogTab() {
         document.getElementById(`food-${meal}`).addEventListener('input', () => {
             saveDayData();
         });
+        document.getElementById(`trigger-${meal}`).addEventListener('change', () => {
+            saveDayData();
+        });
     });
 
     // Notes - auto save on change
@@ -61,6 +89,24 @@ export function initializeLogTab() {
 
     loadDayData();
     updateCycleStatus();
+}
+
+function updateDateDisplay() {
+    const dateDisplay = document.getElementById('current-date-display');
+    const date = new Date(state.currentDate + 'T00:00:00');
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    dateDisplay.textContent = date.toLocaleDateString('en-US', options);
+}
+
+function updateCalendarFromDate() {
+    // Update calendar to show the month of the current date
+    const date = new Date(state.currentDate);
+    state.currentCalendarDate = new Date(date.getFullYear(), date.getMonth(), 1);
+
+    // If on calendar tab, re-render
+    if (document.getElementById('calendar-tab').classList.contains('active')) {
+        renderCalendar();
+    }
 }
 
 function loadDayData() {
@@ -75,6 +121,12 @@ function loadDayData() {
     document.getElementById('food-lunch').value = data.food?.lunch || '';
     document.getElementById('food-dinner').value = data.food?.dinner || '';
     document.getElementById('food-snacks').value = data.food?.snacks || '';
+
+    // Load trigger flags
+    document.getElementById('trigger-breakfast').checked = data.food?.triggerBreakfast || false;
+    document.getElementById('trigger-lunch').checked = data.food?.triggerLunch || false;
+    document.getElementById('trigger-dinner').checked = data.food?.triggerDinner || false;
+    document.getElementById('trigger-snacks').checked = data.food?.triggerSnacks || false;
 
     // Load notes
     document.getElementById('daily-notes').value = data.notes || '';
@@ -99,11 +151,18 @@ function saveDayData() {
         breakfast: document.getElementById('food-breakfast').value.trim(),
         lunch: document.getElementById('food-lunch').value.trim(),
         dinner: document.getElementById('food-dinner').value.trim(),
-        snacks: document.getElementById('food-snacks').value.trim()
+        snacks: document.getElementById('food-snacks').value.trim(),
+        triggerBreakfast: document.getElementById('trigger-breakfast').checked,
+        triggerLunch: document.getElementById('trigger-lunch').checked,
+        triggerDinner: document.getElementById('trigger-dinner').checked,
+        triggerSnacks: document.getElementById('trigger-snacks').checked
     };
 
-    // Only save food object if at least one field has content
-    if (Object.values(food).some(val => val)) {
+    // Only save food object if at least one field has content or trigger is checked
+    const hasContent = food.breakfast || food.lunch || food.dinner || food.snacks;
+    const hasTrigger = food.triggerBreakfast || food.triggerLunch || food.triggerDinner || food.triggerSnacks;
+
+    if (hasContent || hasTrigger) {
         data.food = food;
     } else {
         delete data.food;
