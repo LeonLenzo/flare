@@ -41,12 +41,9 @@ export function initializeLogTab() {
         });
     });
 
-    // Flare rating slider
-    const flareSlider = document.getElementById('flare-rating');
-    const flareValue = document.getElementById('flare-value');
-    flareSlider.addEventListener('input', (e) => {
-        const value = parseInt(e.target.value);
-        flareValue.textContent = value;
+    // Flare rating input
+    const flareInput = document.getElementById('flare-rating');
+    flareInput.addEventListener('input', () => {
         saveDayData();
     });
 
@@ -72,7 +69,6 @@ function loadDayData() {
     // Load flare rating
     const flareRating = data.flareRating || 0;
     document.getElementById('flare-rating').value = flareRating;
-    document.getElementById('flare-value').textContent = flareRating;
 
     // Load food diary
     document.getElementById('food-breakfast').value = data.food?.breakfast || '';

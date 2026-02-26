@@ -38,18 +38,16 @@
             </section>
 
             <section class="card">
-                <h2>Flare Rating</h2>
+                <h2>Daily Log</h2>
                 <div class="flare-rating-container">
-                    <label for="flare-rating">How flared up are you today?</label>
-                    <div class="flare-slider">
-                        <span class="flare-min">0</span>
-                        <input type="range" id="flare-rating" min="0" max="5" value="0" step="1">
-                        <span class="flare-max">5</span>
-                    </div>
-                    <div class="flare-value-display">
-                        <span id="flare-value">0</span> / 5
-                    </div>
+                    <label for="flare-rating">Flare rating (0-5)</label>
+                    <input type="number" id="flare-rating" min="0" max="5" value="0" placeholder="0">
                 </div>
+                <div class="notes-section">
+                    <label for="daily-notes">Notes</label>
+                    <textarea id="daily-notes" placeholder="How are you feeling? Any observations..."></textarea>
+                </div>
+                <div class="auto-save-indicator">Changes saved automatically</div>
             </section>
 
             <section class="card">
@@ -57,27 +55,21 @@
                 <div class="food-diary-grid">
                     <div class="food-entry">
                         <label for="food-breakfast">Breakfast</label>
-                        <input type="text" id="food-breakfast" placeholder="What did you have...">
+                        <textarea id="food-breakfast" rows="2" placeholder="What did you have..."></textarea>
                     </div>
                     <div class="food-entry">
                         <label for="food-lunch">Lunch</label>
-                        <input type="text" id="food-lunch" placeholder="What did you have...">
+                        <textarea id="food-lunch" rows="2" placeholder="What did you have..."></textarea>
                     </div>
                     <div class="food-entry">
                         <label for="food-dinner">Dinner</label>
-                        <input type="text" id="food-dinner" placeholder="What did you have...">
+                        <textarea id="food-dinner" rows="2" placeholder="What did you have..."></textarea>
                     </div>
                     <div class="food-entry">
                         <label for="food-snacks">Snacks</label>
-                        <input type="text" id="food-snacks" placeholder="What did you have...">
+                        <textarea id="food-snacks" rows="2" placeholder="What did you have..."></textarea>
                     </div>
                 </div>
-            </section>
-
-            <section class="card">
-                <h2>Notes</h2>
-                <textarea id="daily-notes" placeholder="Optional notes about today..."></textarea>
-                <div class="auto-save-indicator">Changes saved automatically</div>
             </section>
         </div>
 

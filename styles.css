@@ -192,76 +192,48 @@ header h1 {
     grid-column: 1 / -1;
 }
 
-/* Flare Rating Styles */
+/* Flare Rating & Notes Styles */
 .flare-rating-container {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+    margin-bottom: 20px;
 }
 
 .flare-rating-container label {
-    font-size: 15px;
-    font-weight: 500;
-    color: var(--text);
-}
-
-.flare-slider {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.flare-min,
-.flare-max {
+    display: block;
     font-size: 14px;
     font-weight: 600;
-    color: var(--text-light);
+    color: var(--text);
+    margin-bottom: 6px;
 }
 
 #flare-rating {
-    flex: 1;
-    -webkit-appearance: none;
-    appearance: none;
-    height: 8px;
-    background: var(--border);
-    border-radius: 4px;
-    outline: none;
-}
-
-#flare-rating::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    appearance: none;
-    width: 24px;
-    height: 24px;
-    background: var(--secondary);
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-#flare-rating::-webkit-slider-thumb:hover {
-    transform: scale(1.2);
-}
-
-#flare-rating::-moz-range-thumb {
-    width: 24px;
-    height: 24px;
-    background: var(--secondary);
-    border-radius: 50%;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s;
-}
-
-#flare-rating::-moz-range-thumb:hover {
-    transform: scale(1.2);
-}
-
-.flare-value-display {
-    text-align: center;
-    font-size: 32px;
+    width: 100px;
+    padding: 12px;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    font-size: 24px;
     font-weight: 700;
+    text-align: center;
+    background: var(--card-bg);
     color: var(--secondary);
+    transition: all 0.2s;
+}
+
+#flare-rating:focus {
+    outline: none;
+    border-color: var(--secondary);
+    box-shadow: 0 0 0 3px rgba(236, 72, 153, 0.1);
+}
+
+.notes-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.notes-section label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
 }
 
 /* Food Diary Styles */
@@ -282,16 +254,18 @@ header h1 {
     color: var(--text);
 }
 
-.food-entry input {
+.food-entry textarea {
     padding: 12px;
     border: 2px solid var(--border);
     border-radius: 8px;
     font-size: 15px;
     background: var(--card-bg);
+    font-family: inherit;
+    resize: vertical;
     transition: all 0.2s;
 }
 
-.food-entry input:focus {
+.food-entry textarea:focus {
     outline: none;
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
