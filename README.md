@@ -1,20 +1,20 @@
-# Flare - Symptom Tracker v1.1
+# Flare - Endometriosis Tracker v2.0
 
-A clean, mobile-optimized web app for tracking custom symptoms alongside menstrual cycle data.
+A clean, mobile-optimized web app for tracking endometriosis flares, food intake, and menstrual cycles.
 
 ## Features
 
-- **Custom Symptom Tracking**: Define your own symptoms and track them with 1-5 severity ratings
-- **Quick Daily Logging**: Persistent symptom cards for fast daily entry
+- **Flare Rating**: Simple 0-5 daily rating to track how flared up you are
+- **Food Diary**: Track what you eat (breakfast, lunch, dinner, snacks) to identify potential triggers
 - **Cycle Tracking**: Mark period start and end dates with automatic cycle phase calculation
-- **Calendar View**: Visual overview of periods with total symptom scores
+- **Calendar View**: Visual overview of periods with flare ratings displayed
 - **Insights Dashboard**:
-  - Top 5 symptom trends over last 30 days
-  - Average symptom severity by cycle phase (Menstrual, Follicular, Ovulation, Luteal)
+  - Flare trends over last 30 days
+  - Average flare rating by cycle phase (Menstrual, Follicular, Ovulation, Luteal)
   - Cycle statistics (average period length, cycle length)
 - **Data Export**: Download your data as JSON
 - **Privacy First**: All data stored locally on device using localStorage
-- **Data Migration**: Automatically migrates data from v1.0 format
+- **Data Migration**: Automatically migrates data from v1.x formats
 
 ## Deployment to GitHub Pages
 
@@ -53,14 +53,25 @@ After a few minutes, visit your GitHub Pages URL. You can:
 
 ## Local Development
 
-To test locally, simply open `index.html` in a web browser. No build process needed!
+Because the app uses ES6 modules, you need to run a local server:
+
+```bash
+# Using Python 3
+python3 -m http.server 8000
+
+# Or using Python 2
+python -m SimpleHTTPServer 8000
+
+# Then open http://localhost:8000
+```
 
 ## Technology Stack
 
-- **HTML5/CSS3/JavaScript** - Pure vanilla, no frameworks
+- **HTML5/CSS3/JavaScript** - Pure vanilla ES6 modules, no frameworks
 - **Chart.js** - Data visualizations
 - **localStorage** - Client-side data persistence
 - **Mobile-first responsive design**
+- **Modular architecture** - Organized into separate modules for maintainability
 
 ## Data Management
 

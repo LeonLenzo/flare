@@ -38,13 +38,38 @@
             </section>
 
             <section class="card">
-                <h2>Symptoms</h2>
-                <div id="available-symptoms"></div>
-                <div class="add-new-symptom-section">
-                    <h3>Add New Symptom Type</h3>
-                    <div class="add-symptom-form">
-                        <input type="text" id="symptom-name-input" placeholder="New symptom name" autocomplete="off">
-                        <button id="add-symptom-btn" class="secondary-btn">Add New</button>
+                <h2>Flare Rating</h2>
+                <div class="flare-rating-container">
+                    <label for="flare-rating">How flared up are you today?</label>
+                    <div class="flare-slider">
+                        <span class="flare-min">0</span>
+                        <input type="range" id="flare-rating" min="0" max="5" value="0" step="1">
+                        <span class="flare-max">5</span>
+                    </div>
+                    <div class="flare-value-display">
+                        <span id="flare-value">0</span> / 5
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Food Diary</h2>
+                <div class="food-diary-grid">
+                    <div class="food-entry">
+                        <label for="food-breakfast">Breakfast</label>
+                        <input type="text" id="food-breakfast" placeholder="What did you have...">
+                    </div>
+                    <div class="food-entry">
+                        <label for="food-lunch">Lunch</label>
+                        <input type="text" id="food-lunch" placeholder="What did you have...">
+                    </div>
+                    <div class="food-entry">
+                        <label for="food-dinner">Dinner</label>
+                        <input type="text" id="food-dinner" placeholder="What did you have...">
+                    </div>
+                    <div class="food-entry">
+                        <label for="food-snacks">Snacks</label>
+                        <input type="text" id="food-snacks" placeholder="What did you have...">
                     </div>
                 </div>
             </section>
@@ -88,7 +113,7 @@
                             <span>Luteal</span>
                         </div>
                     </div>
-                    <p class="legend-note"><span class="symptom-score-highlight">Symptom Score</span> is Given as the Sum of All Symptoms Severities</p>
+                    <p class="legend-note"><span class="symptom-score-highlight">Flare Rating</span> is shown on calendar days (0-5)</p>
                 </div>
             </div>
         </div>
@@ -101,12 +126,12 @@
             </section>
 
             <section class="card">
-                <h2>Symptom Trends (Last 30 Days)</h2>
-                <canvas id="symptom-chart"></canvas>
+                <h2>Flare Trends (Last 30 Days)</h2>
+                <canvas id="flare-chart"></canvas>
             </section>
 
             <section class="card">
-                <h2>Symptoms by Cycle Phase</h2>
+                <h2>Flare Rating by Cycle Phase</h2>
                 <canvas id="phase-chart"></canvas>
             </section>
 
@@ -118,6 +143,6 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <script src="app.js"></script>
+    <script type="module" src="src/main.js"></script>
 </body>
 </html>

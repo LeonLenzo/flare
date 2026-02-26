@@ -192,106 +192,109 @@ header h1 {
     grid-column: 1 / -1;
 }
 
-.symptom-quick-log {
-    background: var(--bg);
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    padding: 12px;
+/* Flare Rating Styles */
+.flare-rating-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.flare-rating-container label {
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.flare-slider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.flare-min,
+.flare-max {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-light);
+}
+
+#flare-rating {
+    flex: 1;
+    -webkit-appearance: none;
+    appearance: none;
+    height: 8px;
+    background: var(--border);
+    border-radius: 4px;
+    outline: none;
+}
+
+#flare-rating::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: var(--secondary);
+    border-radius: 50%;
+    cursor: pointer;
     transition: all 0.2s;
 }
 
-.symptom-quick-log:hover {
-    border-color: var(--primary);
+#flare-rating::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
 }
 
-.symptom-quick-log-header {
+#flare-rating::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: var(--secondary);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+}
+
+#flare-rating::-moz-range-thumb:hover {
+    transform: scale(1.2);
+}
+
+.flare-value-display {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--secondary);
+}
+
+/* Food Diary Styles */
+.food-diary-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.food-entry {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
+    flex-direction: column;
+    gap: 6px;
 }
 
-.symptom-name {
-    font-size: 15px;
+.food-entry label {
+    font-size: 14px;
     font-weight: 600;
     color: var(--text);
 }
 
-.delete-symptom-type-btn {
-    background: none;
-    border: none;
-    font-size: 16px;
-    cursor: pointer;
-    opacity: 0.5;
-    transition: all 0.2s;
-    padding: 4px;
-}
-
-.delete-symptom-type-btn:hover {
-    opacity: 1;
-    transform: scale(1.2);
-}
-
-.symptom-quick-log-input {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.severity-input {
-    flex: 1;
-    padding: 10px;
-    border: 2px solid var(--border);
-    border-radius: 6px;
-    font-size: 18px;
-    font-weight: 700;
-    text-align: center;
-    background: var(--card-bg);
-    color: var(--primary);
-}
-
-.severity-input:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
-}
-
-.severity-label {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-light);
-}
-
-.add-new-symptom-section {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 2px solid var(--border);
-}
-
-.add-new-symptom-section h3 {
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--text-light);
-    margin-bottom: 12px;
-}
-
-.add-symptom-form {
-    display: flex;
-    gap: 8px;
-}
-
-#symptom-name-input {
-    flex: 1;
+.food-entry input {
     padding: 12px;
     border: 2px solid var(--border);
     border-radius: 8px;
     font-size: 15px;
     background: var(--card-bg);
+    transition: all 0.2s;
 }
 
-#symptom-name-input:focus {
+.food-entry input:focus {
     outline: none;
     border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
 #add-symptom-btn {
