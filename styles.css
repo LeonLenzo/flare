@@ -25,7 +25,7 @@ body {
     color: var(--text);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
-    padding-top: 170px;
+    padding-top: 80px;
 }
 
 /* Sticky Header */
@@ -99,26 +99,6 @@ header h1 {
     color: white;
 }
 
-/* Date Display Bar */
-.date-display-bar {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    padding: 6px 12px;
-    background: var(--card-bg);
-    border-radius: 10px;
-    box-shadow: var(--shadow);
-}
-
-.current-date-display {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text);
-    min-width: 180px;
-    text-align: center;
-}
-
 .tab-content {
     display: none;
 }
@@ -142,41 +122,12 @@ header h1 {
     color: var(--text);
 }
 
-/* Date Selector */
-.date-selector {
-    margin-bottom: 16px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
+.date-nav-card {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+    border: 2px solid #e9d5ff;
 }
 
-.date-selector input {
-    flex: 1;
-    padding: 12px;
-    border: 2px solid var(--border);
-    border-radius: 8px;
-    font-size: 16px;
-    background: var(--card-bg);
-}
-
-.nav-btn {
-    width: 44px;
-    height: 44px;
-    border: 2px solid var(--border);
-    background: var(--card-bg);
-    border-radius: 8px;
-    font-size: 24px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    color: var(--primary);
-}
-
-.nav-btn:hover {
-    background: var(--primary);
-    color: white;
-    border-color: var(--primary);
-}
 
 /* Cycle Buttons */
 .cycle-buttons {
@@ -397,162 +348,54 @@ textarea {
     border-color: var(--danger);
 }
 
-/* Calendar */
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+.nav-arrow-btn {
     background: var(--card-bg);
-    padding: 16px;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-}
-
-.calendar-header button {
-    width: 40px;
-    height: 40px;
-    border: none;
-    background: var(--primary);
-    color: white;
-    border-radius: 8px;
-    font-size: 20px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    font-size: 24px;
+    color: var(--primary);
     cursor: pointer;
     transition: all 0.2s;
-}
-
-.calendar-header button:active {
-    background: var(--primary-dark);
-}
-
-.calendar-header h2 {
-    font-size: 18px;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 6px;
-    background: var(--card-bg);
-    padding: 12px;
-    border-radius: 12px;
-    box-shadow: var(--shadow);
-}
-
-.calendar-day {
-    aspect-ratio: 1;
     display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    border-radius: 8px;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    position: relative;
-    padding: 6px;
-    transition: transform 0.2s;
-    min-width: 0;
-    min-height: 0;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
 }
 
-.calendar-day:hover:not(.header):not(.other-month) {
-    transform: scale(1.05);
+.nav-arrow-btn:hover {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
 }
 
-.calendar-day.header {
-    color: var(--text-light);
-    font-size: 11px;
-    font-weight: 700;
-    cursor: default;
+.nav-arrow-btn:active {
+    transform: scale(0.95);
+}
+
+.nav-arrow-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.nav-arrow-btn:disabled:hover {
+    background: var(--card-bg);
+    color: var(--primary);
+    border-color: var(--border);
+}
+
+/* Calendar - Circular SVG */
+.calendar-grid {
+    display: flex;
     justify-content: center;
     align-items: center;
-    aspect-ratio: auto;
-    padding: 6px 4px;
-    background: transparent;
-}
-
-.calendar-day.other-month {
-    color: var(--border);
-    opacity: 0.3;
-}
-
-.calendar-day.today {
-    border: 3px solid var(--primary);
-}
-
-.calendar-day.selected {
-    box-shadow: 0 0 0 3px var(--secondary);
-    border: 2px solid var(--secondary);
-}
-
-.calendar-day-number {
-    font-size: 11px;
-    font-weight: 700;
-    text-align: right;
-    margin-bottom: auto;
-}
-
-.calendar-day-flare {
-    text-align: center;
-    margin-top: auto;
-    padding-bottom: 4px;
-    line-height: 1;
-}
-
-.calendar-day-flare[data-flare-level="1"] {
-    font-size: 12px;
-}
-
-.calendar-day-flare[data-flare-level="2"] {
-    font-size: 16px;
-}
-
-.calendar-day-flare[data-flare-level="3"] {
-    font-size: 20px;
-}
-
-.calendar-day-flare[data-flare-level="4"] {
-    font-size: 24px;
-}
-
-.calendar-day-flare[data-flare-level="5"] {
-    font-size: 28px;
-}
-
-.calendar-day-trigger {
-    position: absolute;
-    top: 4px;
-    left: 4px;
-    font-size: 10px;
-    line-height: 1;
-    opacity: 0.8;
-}
-
-/* Cycle phase colors - warm pastels as gradients */
-.calendar-day.phase-menstrual {
-    background: linear-gradient(to bottom, #fca5a5, #fff);
-    color: #374151;
-}
-
-.calendar-day.phase-follicular {
-    background: linear-gradient(to bottom, #fde68a, #fff);
-    color: #374151;
-}
-
-.calendar-day.phase-ovulation {
-    background: linear-gradient(to bottom, #fbcfe8, #fff);
-    color: #374151;
-}
-
-.calendar-day.phase-luteal {
-    background: linear-gradient(to bottom, #ddd6fe, #fff);
-    color: #374151;
-}
-
-.calendar-day.phase-late-luteal {
-    background: linear-gradient(to bottom, #c7d2fe, #fff);
-    color: #374151;
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+    min-height: 400px;
+    flex: 1;
 }
 
 .calendar-legend {
@@ -621,6 +464,10 @@ textarea {
 
 .legend-color.luteal {
     background: #ddd6fe;
+}
+
+.legend-color.late-luteal {
+    background: #c7d2fe;
 }
 
 .legend-bar {

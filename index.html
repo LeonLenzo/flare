@@ -14,25 +14,64 @@
                 <h1>flare.up 🔥</h1>
                 <p class="subtitle">Track symptoms & cycles</p>
             </header>
-
-            <nav class="tab-nav">
-                <button class="tab-btn active" data-tab="log">Log</button>
-                <button class="tab-btn" data-tab="calendar">Calendar</button>
-            </nav>
-
-            <div class="date-display-bar">
-                <button class="nav-btn" id="prev-day">‹</button>
-                <div class="current-date-display" id="current-date-display"></div>
-                <button class="nav-btn" id="next-day">›</button>
-                <input type="date" id="date-picker-input" style="position: absolute; opacity: 0; pointer-events: none;">
-            </div>
         </div>
     </div>
 
     <div class="container">
 
-        <!-- LOG TAB -->
-        <div class="tab-content active" id="log-tab">
+        <!-- CALENDAR (Always visible) -->
+        <div class="tab-content active" id="calendar-tab">
+            <section class="card">
+                <div class="calendar-grid" id="calendar-grid"></div>
+
+                <div class="calendar-legend">
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="legend-color menstrual"></span>
+                            <span>Menstrual</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color follicular"></span>
+                            <span>Follicular</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color ovulation"></span>
+                            <span>Ovulation</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color luteal"></span>
+                            <span>Luteal</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="legend-color late-luteal"></span>
+                            <span>Late Luteal</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="card">
+                <h2>Cycle Summary</h2>
+                <div class="cycle-summary-grid" id="cycle-summary"></div>
+            </section>
+
+            <div class="export-section">
+                <button id="export-data" class="secondary-btn">Export Data (JSON)</button>
+                <button id="clear-data" class="danger-btn">Clear All Data</button>
+            </div>
+        </div>
+
+        <!-- LOG TAB (Hidden, shown when clicking a date) -->
+        <div class="tab-content" id="log-tab" style="display: none;">
+            <button id="back-to-calendar" class="secondary-btn" style="margin-bottom: 16px;">← Back to Calendar</button>
+
+            <section class="card date-nav-card">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 16px;">
+                    <button id="prev-day" class="nav-arrow-btn">‹</button>
+                    <h2 id="log-date-display" style="margin: 0; color: var(--primary); font-size: 18px; text-align: center;"></h2>
+                    <button id="next-day" class="nav-arrow-btn">›</button>
+                </div>
+            </section>
             <input type="date" id="log-date" style="display: none;" />
 
             <section class="card">
@@ -99,44 +138,6 @@
                 </div>
             </section>
         </div>
-
-        <!-- CALENDAR TAB -->
-        <div class="tab-content" id="calendar-tab">
-            <section class="card">
-                <div class="calendar-grid" id="calendar-grid"></div>
-
-                <div class="calendar-legend">
-                    <div class="legend-items">
-                        <div class="legend-item">
-                            <span class="legend-color menstrual"></span>
-                            <span>Menstrual</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-color follicular"></span>
-                            <span>Follicular</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-color ovulation"></span>
-                            <span>Ovulation</span>
-                        </div>
-                        <div class="legend-item">
-                            <span class="legend-color luteal"></span>
-                            <span>Luteal</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <section class="card">
-                <h2>Cycle Summary</h2>
-                <div class="cycle-summary-grid" id="cycle-summary"></div>
-            </section>
-
-            <div class="export-section">
-                <button id="export-data" class="secondary-btn">Export Data (JSON)</button>
-                <button id="clear-data" class="danger-btn">Clear All Data</button>
-            </div>
-        </div>
     </div>
 
     <!-- Welcome Overlay -->
@@ -160,6 +161,7 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="module" src="src/main.js"></script>
 </body>
 </html>

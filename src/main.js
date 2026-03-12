@@ -4,29 +4,6 @@ import { initializeLogTab } from './modules/log.js';
 import { initializeCalendar, renderCalendar } from './modules/calendar.js';
 import { renderCycleSummary, initializeDataButtons } from './modules/insights.js';
 
-// ===== TAB NAVIGATION =====
-function initializeTabs() {
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    tabButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const tabName = button.dataset.tab;
-
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            tabContents.forEach(content => content.classList.remove('active'));
-
-            button.classList.add('active');
-            document.getElementById(`${tabName}-tab`).classList.add('active');
-
-            if (tabName === 'calendar') {
-                renderCalendar();
-                renderCycleSummary();
-            }
-        });
-    });
-}
-
 // ===== WELCOME OVERLAY =====
 function initializeWelcomeOverlay() {
     const overlay = document.getElementById('welcome-overlay');
@@ -55,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Migrate old data format if needed
     migrateData();
 
-    initializeTabs();
     initializeLogTab();
     initializeCalendar();
     initializeDataButtons();
@@ -66,4 +42,15 @@ document.addEventListener('DOMContentLoaded', () => {
         const event = new Event('change');
         document.getElementById('log-date').dispatchEvent(event);
     });
+
+    // Back to calendar button
+    const backBtn = document.getElementById('back-to-calendar');
+    if (backBtn) {
+        backBtn.addEventListener('click', () => {
+            document.getElementById('log-tab').style.display = 'none';
+            document.getElementById('calendar-tab').style.display = 'block';
+            renderCalendar();
+            renderCycleSummary();
+        });
+    }
 });

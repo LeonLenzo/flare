@@ -11,47 +11,16 @@ export function initializeLogTab() {
         loadDayData();
     });
 
+    // Day navigation arrows
+    document.getElementById('prev-day').addEventListener('click', () => {
+        navigateDay(-1);
+    });
+    document.getElementById('next-day').addEventListener('click', () => {
+        navigateDay(1);
+    });
+
     // Update date display
     updateDateDisplay();
-
-    // Date picker functionality
-    const datePickerInput = document.getElementById('date-picker-input');
-    const dateDisplay = document.getElementById('current-date-display');
-
-    dateDisplay.style.cursor = 'pointer';
-    dateDisplay.addEventListener('click', () => {
-        datePickerInput.value = state.currentDate;
-        datePickerInput.showPicker();
-    });
-
-    datePickerInput.addEventListener('change', (e) => {
-        state.currentDate = e.target.value;
-        dateInput.value = state.currentDate;
-        updateDateDisplay();
-        updateCalendarFromDate();
-        loadDayData();
-    });
-
-    // Day navigation
-    document.getElementById('prev-day').addEventListener('click', () => {
-        const date = new Date(state.currentDate);
-        date.setDate(date.getDate() - 1);
-        state.currentDate = date.toISOString().split('T')[0];
-        dateInput.value = state.currentDate;
-        updateDateDisplay();
-        updateCalendarFromDate();
-        loadDayData();
-    });
-
-    document.getElementById('next-day').addEventListener('click', () => {
-        const date = new Date(state.currentDate);
-        date.setDate(date.getDate() + 1);
-        state.currentDate = date.toISOString().split('T')[0];
-        dateInput.value = state.currentDate;
-        updateDateDisplay();
-        updateCalendarFromDate();
-        loadDayData();
-    });
 
     // Cycle tracking
     document.querySelectorAll('.cycle-btn').forEach(btn => {
@@ -91,11 +60,38 @@ export function initializeLogTab() {
     updateCycleStatus();
 }
 
+function navigateDay(offset) {
+    const currentDate = new Date(state.currentDate + 'T00:00:00');
+    currentDate.setDate(currentDate.getDate() + offset);
+
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    state.currentDate = `${year}-${month}-${day}`;
+
+    const dateInput = document.getElementById('log-date');
+    dateInput.value = state.currentDate;
+
+    loadDayData();
+    updateDateDisplay();
+}
+
 function updateDateDisplay() {
-    const dateDisplay = document.getElementById('current-date-display');
-    const date = new Date(state.currentDate + 'T00:00:00');
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    dateDisplay.textContent = date.toLocaleDateString('en-US', options);
+    // Update log date display (in log tab)
+    const logDateDisplay = document.getElementById('log-date-display');
+    if (logDateDisplay) {
+        const date = new Date(state.currentDate + 'T00:00:00');
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        logDateDisplay.textContent = date.toLocaleDateString('en-US', options);
+    }
+
+    // Update navigation button states
+    const today = new Date().toISOString().split('T')[0];
+    const nextDayBtn = document.getElementById('next-day');
+    if (nextDayBtn) {
+        // Disable next button if we're on today
+        nextDayBtn.disabled = state.currentDate >= today;
+    }
 }
 
 function updateCalendarFromDate() {
