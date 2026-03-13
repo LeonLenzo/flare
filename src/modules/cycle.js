@@ -40,12 +40,23 @@ export function getPeriodInfo(date) {
     const period = state.cycleData.periods?.find(p => p.start === date);
     const periodWithEnd = state.cycleData.periods?.find(p => p.end === date);
 
+    // Check if date is within a logged period
+    const isInPeriod = state.cycleData.periods?.some(p => {
+        if (p.end) {
+            // Period has an end date - use actual logged range
+            return p.start <= date && p.end >= date;
+        } else {
+            // No end date logged - only count as "in period" for past/present dates within 5 days
+            const today = new Date().toISOString().split('T')[0];
+            const daysSinceStart = Math.floor((new Date(date) - new Date(p.start)) / (1000 * 60 * 60 * 24));
+            return p.start <= date && date <= today && daysSinceStart < 5;
+        }
+    });
+
     return {
         isPeriodStart: !!period,
         isPeriodEnd: !!periodWithEnd,
-        isInPeriod: state.cycleData.periods?.some(p =>
-            p.start <= date && (!p.end || p.end >= date)
-        )
+        isInPeriod: isInPeriod
     };
 }
 
@@ -69,8 +80,13 @@ export function getCyclePhase(date) {
     if (!cycleDay) return 'Unknown';
 
     const periodInfo = getPeriodInfo(date);
+
+    // Use actual logged period data if available
     if (periodInfo.isInPeriod) return 'Menstrual';
 
+    // For future dates, predict based on typical cycle phases
+    // For past dates without logged period, also use prediction
+    if (cycleDay <= 5) return 'Menstrual';
     if (cycleDay <= 14) return 'Follicular';
     if (cycleDay <= 16) return 'Ovulation';
     if (cycleDay <= 28) return 'Luteal';

@@ -21,8 +21,34 @@ function renderCircularCalendar() {
     const cycleDay = getCycleDay(state.currentDate);
 
     if (!cycleDay) {
-        // No cycle data yet - show message
-        container.innerHTML = '<div style="padding: 40px; text-align: center; color: #6b7280;">Mark a period start in the Log tab to see your cycle calendar</div>';
+        // No cycle data yet - show message with button to start logging
+        container.innerHTML = `
+            <div style="padding: 60px 40px; text-align: center;">
+                <div style="font-size: 48px; margin-bottom: 16px;">🔥</div>
+                <h3 style="color: #8b5cf6; margin-bottom: 12px; font-size: 20px;">Welcome to Flare</h3>
+                <p style="color: #6b7280; margin-bottom: 24px; line-height: 1.6;">
+                    Track your menstrual cycle and symptoms to identify patterns and triggers.
+                </p>
+                <button id="start-logging-btn" style="
+                    background: #8b5cf6;
+                    color: white;
+                    border: none;
+                    padding: 14px 28px;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s;
+                ">Log Your First Day</button>
+            </div>
+        `;
+
+        // Add click handler to the button
+        document.getElementById('start-logging-btn').addEventListener('click', () => {
+            document.getElementById('calendar-tab').style.display = 'none';
+            document.getElementById('log-tab').style.display = 'block';
+        });
+
         return;
     }
 
@@ -63,6 +89,8 @@ function renderCircularCalendar() {
     const hasPrevCycle = currentPeriodIndex > 0;
     const hasNextCycle = currentPeriodIndex >= 0 && currentPeriodIndex < sortedPeriods.length - 1;
 
+    const today = new Date().toISOString().split('T')[0];
+
     const cycleDates = [];
     for (let day = 1; day <= cycleDaysToShow; day++) {
         const targetDate = new Date(periodStart);
@@ -75,7 +103,8 @@ function renderCircularCalendar() {
             calendarDay: targetDate.getDate(),
             month: targetDate.toLocaleDateString('en-US', { month: 'short' }),
             phase: getCyclePhase(dateStr),
-            flareRating: state.symptomsData[dateStr]?.flareRating || 0
+            flareRating: state.symptomsData[dateStr]?.flareRating || 0,
+            isPredicted: dateStr > today  // Future dates are predictions
         });
     }
 
@@ -152,6 +181,10 @@ function renderCircularCalendar() {
         const arcStartAngle = startAngle + (Math.PI / 2);
         const arcEndAngle = endAngle + (Math.PI / 2);
 
+        // Check if this group contains any predicted (future) days
+        const groupDates = cycleDates.slice(group.startDay - 1, group.endDay);
+        const isPredicted = groupDates.some(d => d.isPredicted);
+
         // Create arc with explicit angles
         const phaseArc = d3.arc()
             .innerRadius(innerRadius)
@@ -162,13 +195,12 @@ function renderCircularCalendar() {
         g.append('path')
             .attr('d', phaseArc)
             .attr('fill', phaseColors[group.phase])
+            .attr('opacity', isPredicted ? 0.35 : 1)  // Lighter for predictions
             .attr('stroke', '#ffffff')
             .attr('stroke-width', 2);
     });
 
     // Draw days around circle
-    const today = new Date().toISOString().split('T')[0];
-
     cycleDates.forEach(dayData => {
         const isFuture = dayData.dateStr > today;
         const angle = getDayAngle(dayData.cycleDay);
@@ -188,8 +220,8 @@ function renderCircularCalendar() {
             .attr('y', Math.sin(angle) * labelRadius)
             .attr('text-anchor', 'middle')
             .attr('dominant-baseline', 'middle')
-            .attr('font-size', '13px')
-            .attr('font-weight', '600')
+            .attr('font-size', '16px')
+            .attr('font-weight', '700')
             .attr('fill', isFuture ? '#d1d5db' : '#6b7280')
             .attr('cursor', isFuture ? 'default' : 'pointer')
             .attr('opacity', isFuture ? 0.5 : 1)
@@ -208,10 +240,10 @@ function renderCircularCalendar() {
                     document.getElementById('log-tab').style.display = 'block';
                 })
                 .on('mouseenter', function() {
-                    d3.select(this).attr('fill', '#8b5cf6').attr('font-size', '15px');
+                    d3.select(this).attr('fill', '#8b5cf6').attr('font-size', '19px');
                 })
                 .on('mouseleave', function() {
-                    d3.select(this).attr('fill', '#6b7280').attr('font-size', '13px');
+                    d3.select(this).attr('fill', '#6b7280').attr('font-size', '16px');
                 });
         }
 
