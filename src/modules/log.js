@@ -1,13 +1,12 @@
 import { Storage, state } from './storage.js';
 import { toggleCycleDay, getPeriodInfo, getCycleDay, getCyclePhase } from './cycle.js';
-import { renderCalendar } from './calendar.js';
 
 // ===== LOG TAB =====
 export function initializeLogTab() {
     const dateInput = document.getElementById('log-date');
-    dateInput.value = state.currentDate;
+    dateInput.value = state.logDate;
     dateInput.addEventListener('change', (e) => {
-        state.currentDate = e.target.value;
+        state.logDate = e.target.value;
         loadDayData();
     });
 
@@ -26,12 +25,9 @@ export function initializeLogTab() {
     document.querySelectorAll('.cycle-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const type = btn.dataset.type;
-            toggleCycleDay(state.currentDate, type);
+            toggleCycleDay(state.logDate, type);
             updateCycleStatus();
-            // Re-render calendar if on calendar tab
-            if (document.getElementById('calendar-tab').classList.contains('active')) {
-                renderCalendar();
-            }
+            window.dispatchEvent(new CustomEvent('dataChanged'));
         });
     });
 
@@ -61,16 +57,16 @@ export function initializeLogTab() {
 }
 
 function navigateDay(offset) {
-    const currentDate = new Date(state.currentDate + 'T00:00:00');
+    const currentDate = new Date(state.logDate + 'T00:00:00');
     currentDate.setDate(currentDate.getDate() + offset);
 
     const year = currentDate.getFullYear();
     const month = String(currentDate.getMonth() + 1).padStart(2, '0');
     const day = String(currentDate.getDate()).padStart(2, '0');
-    state.currentDate = `${year}-${month}-${day}`;
+    state.logDate = `${year}-${month}-${day}`;
 
     const dateInput = document.getElementById('log-date');
-    dateInput.value = state.currentDate;
+    dateInput.value = state.logDate;
 
     loadDayData();
     updateDateDisplay();
@@ -80,7 +76,7 @@ function updateDateDisplay() {
     // Update log date display (in log tab)
     const logDateDisplay = document.getElementById('log-date-display');
     if (logDateDisplay) {
-        const date = new Date(state.currentDate + 'T00:00:00');
+        const date = new Date(state.logDate + 'T00:00:00');
         const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
         logDateDisplay.textContent = date.toLocaleDateString('en-US', options);
     }
@@ -90,23 +86,12 @@ function updateDateDisplay() {
     const nextDayBtn = document.getElementById('next-day');
     if (nextDayBtn) {
         // Disable next button if we're on today
-        nextDayBtn.disabled = state.currentDate >= today;
-    }
-}
-
-function updateCalendarFromDate() {
-    // Update calendar to show the month of the current date
-    const date = new Date(state.currentDate);
-    state.currentCalendarDate = new Date(date.getFullYear(), date.getMonth(), 1);
-
-    // If on calendar tab, re-render
-    if (document.getElementById('calendar-tab').classList.contains('active')) {
-        renderCalendar();
+        nextDayBtn.disabled = state.logDate >= today;
     }
 }
 
 function loadDayData() {
-    const data = state.symptomsData[state.currentDate] || {};
+    const data = state.symptomsData[state.logDate] || {};
 
     // Load flare rating
     const flareRating = data.flareRating || 0;
@@ -132,7 +117,7 @@ function loadDayData() {
 }
 
 function saveDayData() {
-    const data = state.symptomsData[state.currentDate] || {};
+    const data = state.symptomsData[state.logDate] || {};
 
     // Save flare rating
     const flareRating = parseInt(document.getElementById('flare-rating').value);
@@ -174,29 +159,25 @@ function saveDayData() {
 
     // Save or delete entry
     if (Object.keys(data).length > 0) {
-        state.symptomsData[state.currentDate] = data;
+        state.symptomsData[state.logDate] = data;
     } else {
-        delete state.symptomsData[state.currentDate];
+        delete state.symptomsData[state.logDate];
     }
 
     Storage.set('symptoms', state.symptomsData);
-
-    // Re-render calendar if on calendar tab
-    if (document.getElementById('calendar-tab').classList.contains('active')) {
-        renderCalendar();
-    }
+    window.dispatchEvent(new CustomEvent('dataChanged'));
 }
 
 function updateCycleStatus() {
     const statusDiv = document.getElementById('cycle-status');
     const currentPeriod = state.cycleData.periods?.find(p =>
-        p.start === state.currentDate || (p.end && p.start <= state.currentDate && p.end >= state.currentDate)
+        p.start === state.logDate || (p.end && p.start <= state.logDate && p.end >= state.logDate)
     );
 
     // Update button states
     document.querySelectorAll('.cycle-btn').forEach(btn => btn.classList.remove('marked'));
 
-    const periodInfo = getPeriodInfo(state.currentDate);
+    const periodInfo = getPeriodInfo(state.logDate);
     if (periodInfo.isPeriodStart) {
         document.querySelector('[data-type="period-start"]').classList.add('marked');
     }
@@ -204,8 +185,8 @@ function updateCycleStatus() {
         document.querySelector('[data-type="period-end"]').classList.add('marked');
     }
 
-    const cycleDay = getCycleDay(state.currentDate);
-    const cyclePhase = getCyclePhase(state.currentDate);
+    const cycleDay = getCycleDay(state.logDate);
+    const cyclePhase = getCyclePhase(state.logDate);
 
     if (currentPeriod) {
         statusDiv.innerHTML = `<strong>🩸 Menstrual Phase</strong>${cycleDay ? ` - Day ${cycleDay}` : ''}`;

@@ -7,8 +7,8 @@ export const Storage = {
 
 // ===== STATE =====
 export const state = {
-    currentDate: new Date().toISOString().split('T')[0],
-    currentCalendarDate: new Date(),
+    logDate: new Date().toISOString().split('T')[0],
+    calendarDate: new Date().toISOString().split('T')[0],
     symptomsData: Storage.get('symptoms') || {},
     cycleData: Storage.get('cycle') || { periods: [] }
 };

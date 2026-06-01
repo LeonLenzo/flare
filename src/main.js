@@ -47,6 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const backBtn = document.getElementById('back-to-calendar');
     if (backBtn) {
         backBtn.addEventListener('click', () => {
+            state.calendarDate = state.logDate;
             document.getElementById('log-tab').style.display = 'none';
             document.getElementById('calendar-tab').style.display = 'block';
             renderCalendar();

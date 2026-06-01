@@ -23,8 +23,6 @@ export function migrateData() {
 
     if (!needsMigration) return;
 
-    console.log('Migrating data to v2.0...');
-
     // Map old symptom names to readable names (v1.0 -> v1.1)
     const symptomNameMap = {
         'pelvic-pain': 'Pelvic Pain',
@@ -76,8 +74,6 @@ export function migrateData() {
                 const avg = symptomValues.reduce((a, b) => a + b, 0) / symptomValues.length;
                 dayData.flareRating = Math.round(avg);
             }
-            // Keep old symptom data in archive for reference
-            dayData._archivedSymptoms = dayData.symptoms;
             delete dayData.symptoms;
         }
     });
@@ -85,7 +81,5 @@ export function migrateData() {
     // Remove old allSymptoms storage key
     localStorage.removeItem('allSymptoms');
 
-    // Save migrated data
     Storage.set('symptoms', symptomsData);
-    console.log('Migration to v2.0 complete!');
 }

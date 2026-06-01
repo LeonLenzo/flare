@@ -7,6 +7,11 @@ const CYCLE_GAP = 0.35; // Gap between end of cycle and start (radians)
 
 export function initializeCalendar() {
     renderCircularCalendar();
+    window.addEventListener('dataChanged', () => {
+        if (document.getElementById('calendar-tab').style.display !== 'none') {
+            renderCircularCalendar();
+        }
+    });
 }
 
 export function renderCalendar() {
@@ -18,7 +23,7 @@ function renderCircularCalendar() {
     container.innerHTML = '';
 
     // Get current cycle info
-    const cycleDay = getCycleDay(state.currentDate);
+    const cycleDay = getCycleDay(state.calendarDate);
 
     if (!cycleDay) {
         // No cycle data yet - show message with button to start logging
@@ -53,7 +58,7 @@ function renderCircularCalendar() {
     }
 
     // Calculate all dates in this cycle
-    const currentDate = new Date(state.currentDate);
+    const currentDate = new Date(state.calendarDate);
     const periodStart = new Date(currentDate);
     periodStart.setDate(periodStart.getDate() - (cycleDay - 1));
 
@@ -231,7 +236,7 @@ function renderCircularCalendar() {
         if (!isFuture) {
             dayText
                 .on('click', () => {
-                    state.currentDate = dayData.dateStr;
+                    state.logDate = dayData.dateStr;
                     document.getElementById('log-date').value = dayData.dateStr;
                     window.dispatchEvent(new CustomEvent('dateChanged'));
 
@@ -284,7 +289,7 @@ function renderCircularCalendar() {
     });
 
     // Center text
-    const currentPhase = getCyclePhase(state.currentDate);
+    const currentPhase = getCyclePhase(state.calendarDate);
     const phaseColor = phaseColors[currentPhase] || '#6b7280';
 
     g.append('text')
@@ -306,12 +311,13 @@ function renderCircularCalendar() {
         .attr('fill', '#6b7280')
         .text(currentPhase);
 
-    // Today indicator (hollow circle around today's date number only)
-    if (state.currentDate === today) {
-        const currentAngle = getDayAngle(cycleDay);
+    // Today indicator — circle around today's date number wherever it falls in this cycle
+    const todayInCycle = cycleDates.find(d => d.dateStr === today);
+    if (todayInCycle) {
+        const todayAngle = getDayAngle(todayInCycle.cycleDay);
         g.append('circle')
-            .attr('cx', Math.cos(currentAngle) * labelRadius)
-            .attr('cy', Math.sin(currentAngle) * labelRadius)
+            .attr('cx', Math.cos(todayAngle) * labelRadius)
+            .attr('cy', Math.sin(todayAngle) * labelRadius)
             .attr('r', 13)
             .attr('fill', 'none')
             .attr('stroke', '#ec4899')
@@ -336,7 +342,7 @@ function renderCircularCalendar() {
             .text('‹')
             .on('click', () => {
                 const prevPeriodStart = sortedPeriods[currentPeriodIndex - 1];
-                state.currentDate = prevPeriodStart;
+                state.calendarDate = prevPeriodStart;
                 renderCircularCalendar();
             })
             .on('mouseenter', function() {
@@ -360,7 +366,7 @@ function renderCircularCalendar() {
             .text('›')
             .on('click', () => {
                 const nextPeriodStart = sortedPeriods[currentPeriodIndex + 1];
-                state.currentDate = nextPeriodStart;
+                state.calendarDate = nextPeriodStart;
                 renderCircularCalendar();
             })
             .on('mouseenter', function() {
